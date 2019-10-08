@@ -9,6 +9,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using SC.API.DAL;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System.Text.Json;
+using AutoMapper;
 
 namespace SC.API
 {
@@ -24,7 +30,27 @@ namespace SC.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            // Connection to the SnookerClub database
+            services.AddDbContext<SCContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("SCContext")));
+
+            // AutoMapper
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMapperProfile());
+            });
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
+            // MVC
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.IgnoreNullValues = true;
+                    options.JsonSerializerOptions.MaxDepth = 3;
+                    // camelCase
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                }); ;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,6 +61,10 @@ namespace SC.API
                 app.UseDeveloperExceptionPage();
             }
 
+            // Update database migrations on startup
+            UpdateDatabase(app);
+
+            // MVC
             app.UseRouting();
 
             app.UseAuthorization();
@@ -43,6 +73,17 @@ namespace SC.API
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private void UpdateDatabase(IApplicationBuilder app)
+        {
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                using (var context = serviceScope.ServiceProvider.GetService<SCContext>())
+                {
+                    context.Database.Migrate();
+                }
+            }
         }
     }
 }
