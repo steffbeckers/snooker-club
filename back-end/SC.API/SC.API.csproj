@@ -7,10 +7,17 @@
   <ItemGroup>
     <Compile Remove="Migrations\20191008230801_InitialLeagues.cs" />
     <Compile Remove="Migrations\20191008230801_InitialLeagues.Designer.cs" />
+    <Compile Remove="Migrations\20191008235745_Identity.cs" />
+    <Compile Remove="Migrations\20191008235745_Identity.Designer.cs" />
+    <Compile Remove="Migrations\20191009000453_Identity2.cs" />
+    <Compile Remove="Migrations\20191009000453_Identity2.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
