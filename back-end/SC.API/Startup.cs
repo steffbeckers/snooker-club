@@ -20,6 +20,12 @@ using Microsoft.AspNetCore.Identity;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using SC.API.DAL.Repositories;
+using GraphQL;
+using SC.API.GraphQL;
+using GraphQL.Server;
+using GraphQL.Server.Ui.Playground;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace SC.API
 {
@@ -37,7 +43,19 @@ namespace SC.API
         {
             // Connection to the SnookerClub database
             services.AddDbContext<SCContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("SCContext")));
+                options.UseSqlServer(Configuration.GetConnectionString("SCContext")));
+
+            // Repositories
+            services.AddScoped<LeagueRepository>();
+
+            // GraphQL
+            services.AddScoped<IDependencyResolver>(s =>
+                new FuncDependencyResolver(s.GetRequiredService));
+            services.AddScoped<SCSchema>();
+            services.AddGraphQL(options =>
+            {
+                options.ExposeExceptions = true;
+            }).AddGraphTypes(ServiceLifetime.Scoped);
 
             // Authentication
             services.AddIdentity<User, IdentityRole<Guid>>()
@@ -106,6 +124,18 @@ namespace SC.API
                     // camelCase
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                 });
+
+            // Kestrel
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+
+            // IIS Express
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -118,6 +148,10 @@ namespace SC.API
 
             // Update database migrations on startup
             UpdateDatabase(app);
+
+            // GraphQL
+            app.UseGraphQL<SCSchema>();
+            app.UseGraphQLPlayground(new GraphQLPlaygroundOptions());
 
             // MVC
             app.UseRouting();

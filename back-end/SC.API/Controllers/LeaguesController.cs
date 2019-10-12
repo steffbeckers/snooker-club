@@ -29,14 +29,14 @@ namespace SC.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LeagueVM>>> GetLeague()
         {
-            return this.mapper.Map<List<LeagueVM>>(await context.League.ToListAsync());
+            return this.mapper.Map<List<LeagueVM>>(await context.Leagues.ToListAsync());
         }
 
         // GET: api/Leagues/5
         [HttpGet("{id}")]
         public async Task<ActionResult<LeagueVM>> GetLeague(Guid id)
         {
-            var league = await context.League.FindAsync(id);
+            var league = await context.Leagues.FindAsync(id);
 
             if (league == null)
             {
@@ -84,7 +84,7 @@ namespace SC.API.Controllers
         [HttpPost]
         public async Task<ActionResult<League>> PostLeague(League league)
         {
-            context.League.Add(league);
+            context.Leagues.Add(league);
             await context.SaveChangesAsync();
 
             return CreatedAtAction("GetLeague", new { id = league.Id }, league);
@@ -94,13 +94,13 @@ namespace SC.API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<League>> DeleteLeague(Guid id)
         {
-            var league = await context.League.FindAsync(id);
+            var league = await context.Leagues.FindAsync(id);
             if (league == null)
             {
                 return NotFound();
             }
 
-            context.League.Remove(league);
+            context.Leagues.Remove(league);
             await context.SaveChangesAsync();
 
             return league;
@@ -108,7 +108,7 @@ namespace SC.API.Controllers
 
         private bool LeagueExists(Guid id)
         {
-            return context.League.Any(e => e.Id == id);
+            return context.Leagues.Any(e => e.Id == id);
         }
     }
 }

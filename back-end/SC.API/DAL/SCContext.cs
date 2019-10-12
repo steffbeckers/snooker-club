@@ -17,7 +17,7 @@ namespace SC.API.DAL
         {
         }
 
-        public DbSet<League> League { get; set; }
+        public DbSet<League> Leagues { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
