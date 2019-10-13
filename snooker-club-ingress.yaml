@@ -17,7 +17,11 @@ spec:
       #   backend:
       #     serviceName: snooker-club-app
       #     servicePort: 80
-      - path: /api
+      - path: /graphql
+        backend:
+          serviceName: snooker-club-api
+          servicePort: 80
+      - path: /ui/playground
         backend:
           serviceName: snooker-club-api
           servicePort: 80
