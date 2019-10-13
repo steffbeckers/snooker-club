@@ -5,6 +5,7 @@ using SC.API.GraphQL.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace SC.API.GraphQL
@@ -15,7 +16,8 @@ namespace SC.API.GraphQL
             LeagueRepository leagueRepository,
             PlayerRepository playerRepository,
             TournamentRepository tournamentRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            SettingRepository settingRepository
         )
         {
             // Leagues
@@ -52,15 +54,35 @@ namespace SC.API.GraphQL
             );
 
             // Users
-            // TODO: Add authorization on user retrieval?
             Field<ListGraphType<UserType>>(
                 "users",
-                resolve: context => userRepository.Get()
+                resolve: context => {
+                    ClaimsPrincipal user = (ClaimsPrincipal)context.UserContext;
+                    if (!user.IsInRole("Admin")) { return null; }
+
+                    return userRepository.Get();
+                }
             );
-            Field<LeagueType>(
+            Field<UserType>(
                 "user",
                 arguments: new QueryArguments(new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id" }),
-                resolve: context => userRepository.GetById(context.GetArgument<Guid>("id"))
+                resolve: context => {
+                    ClaimsPrincipal user = (ClaimsPrincipal)context.UserContext;
+                    if (!user.IsInRole("Admin")) { return null; }
+
+                    return userRepository.GetById(context.GetArgument<Guid>("id"));
+                }
+            );
+
+            // Settings
+            Field<ListGraphType<SettingType>>(
+                "settings",
+                resolve: context => settingRepository.Get()
+            );
+            Field<SettingType>(
+                "setting",
+                arguments: new QueryArguments(new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "key" }),
+                resolve: context => settingRepository.GetByKey(context.GetArgument<string>("key"))
             );
         }
     }

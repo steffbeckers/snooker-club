@@ -9,6 +9,7 @@ namespace SC.API.Models
     {
         public League()
         {
+            this.LeaguePlayer = new List<LeaguePlayer>();
             this.Tournaments = new List<Tournament>();
         }
 
@@ -18,6 +19,7 @@ namespace SC.API.Models
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
 
-        public List<Tournament> Tournaments { get; set; }
+        public IList<LeaguePlayer> LeaguePlayer { get; set; }
+        public IList<Tournament> Tournaments { get; set; }
     }
 }

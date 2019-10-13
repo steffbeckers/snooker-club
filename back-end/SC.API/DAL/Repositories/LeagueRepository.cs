@@ -31,7 +31,8 @@ namespace SC.API.DAL.Repositories
             foreach (Player player in players)
             {
                 player.Handicap = this.context.LeaguePlayer
-                    .Single(lp => lp.LeagueId == id && lp.PlayerId == player.Id).Handicap;
+                    .Single(lp => lp.LeagueId == id && lp.PlayerId == player.Id)
+                    .Handicap;
             }
 
             return players;

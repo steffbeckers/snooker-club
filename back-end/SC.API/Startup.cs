@@ -46,8 +46,12 @@ namespace SC.API
                 options.UseSqlServer(Configuration.GetConnectionString("SCContext")));
 
             // Repositories
+            services.AddScoped<BreakRepository>();
+            services.AddScoped<FrameRepository>();
+            services.AddScoped<GroupRepository>();
             services.AddScoped<LeagueRepository>();
             services.AddScoped<PlayerRepository>();
+            services.AddScoped<SettingRepository>();
             services.AddScoped<TournamentRepository>();
             services.AddScoped<UserRepository>();
 
@@ -58,7 +62,8 @@ namespace SC.API
             services.AddGraphQL(options =>
             {
                 options.ExposeExceptions = true;
-            }).AddGraphTypes(ServiceLifetime.Scoped);
+            }).AddGraphTypes(ServiceLifetime.Scoped)
+            .AddUserContextBuilder(httpContext => httpContext.User);
 
             // Authentication
             services.AddIdentity<User, IdentityRole<Guid>>()

@@ -32,6 +32,16 @@ namespace SC.API.GraphQL.Types
                 resolve: context => tournamentRepository.GetPlayersOfTournamentById(context.Source.Id)
             );
 
+            Field<ListGraphType<GroupType>>(
+                "groups",
+                resolve: context => tournamentRepository.GetGroupsOfTournamentById(context.Source.Id)
+            );
+
+            Field<ListGraphType<FrameType>>(
+                "frames",
+                resolve: context => tournamentRepository.GetFramesOfTournamentById(context.Source.Id)
+            );
+
             Field(x => x.WinnerId, type: typeof(IdGraphType), nullable: true);
             Field<PlayerType>(
                 "winner",

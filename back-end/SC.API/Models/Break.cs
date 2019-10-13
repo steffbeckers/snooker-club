@@ -8,19 +8,12 @@ namespace SC.API.Models
 {
     public class Break : SCModelBase
     {
-        public Guid FrameId { get; set; }
-        public Guid PlayerId { get; set; }
         public int Score { get; set; }
-    }
 
-    public class BreakType : ObjectGraphType<Break>
-    {
-        public BreakType()
-        {
-            Field(x => x.Id);
-            Field(x => x.FrameId);
-            Field(x => x.PlayerId);
-            Field(x => x.Score);
-        }
+        public Guid FrameId { get; set; }
+        public Frame Frame { get; set; }
+
+        public Guid PlayerId { get; set; }
+        public Player Player { get; set; }
     }
 }

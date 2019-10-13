@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SC.API.DAL;
 
 namespace SC.API.Migrations
 {
     [DbContext(typeof(SCContext))]
-    partial class SCContextModelSnapshot : ModelSnapshot
+    [Migration("20191013113351_BreaksRelations")]
+    partial class BreaksRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -494,9 +496,7 @@ namespace SC.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Players");
                 });
@@ -681,9 +681,6 @@ namespace SC.API.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("PlayerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -703,8 +700,6 @@ namespace SC.API.Migrations
                         .IsUnique()
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.HasIndex("PlayerId");
 
                     b.ToTable("Users");
                 });
@@ -782,7 +777,7 @@ namespace SC.API.Migrations
                         .HasForeignKey("GroupId");
 
                     b.HasOne("SC.API.Models.Tournament", "Tournament")
-                        .WithMany("Frames")
+                        .WithMany()
                         .HasForeignKey("TournamentId");
 
                     b.HasOne("SC.API.Models.Player", "Winner")
@@ -808,7 +803,7 @@ namespace SC.API.Migrations
             modelBuilder.Entity("SC.API.Models.Group", b =>
                 {
                     b.HasOne("SC.API.Models.Tournament", "Tournament")
-                        .WithMany("Groups")
+                        .WithMany()
                         .HasForeignKey("TournamentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -847,8 +842,8 @@ namespace SC.API.Migrations
             modelBuilder.Entity("SC.API.Models.Player", b =>
                 {
                     b.HasOne("SC.API.Models.User", "User")
-                        .WithOne()
-                        .HasForeignKey("SC.API.Models.Player", "UserId");
+                        .WithMany()
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("SC.API.Models.PlayerTournament", b =>
@@ -879,13 +874,6 @@ namespace SC.API.Migrations
                     b.HasOne("SC.API.Models.Player", "Winner")
                         .WithMany()
                         .HasForeignKey("WinnerId");
-                });
-
-            modelBuilder.Entity("SC.API.Models.User", b =>
-                {
-                    b.HasOne("SC.API.Models.Player", "Player")
-                        .WithMany()
-                        .HasForeignKey("PlayerId");
                 });
 #pragma warning restore 612, 618
         }

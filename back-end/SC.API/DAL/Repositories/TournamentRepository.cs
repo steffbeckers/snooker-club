@@ -19,7 +19,7 @@ namespace SC.API.DAL.Repositories
 
         // Additional functionality and overrides
 
-        public IEnumerable<Tournament> GetByLeagueId (Guid leagueId)
+        public IEnumerable<Tournament> GetByLeagueId(Guid leagueId)
         {
             return this.context.Tournaments.Where(a => a.LeagueId == leagueId).ToList();
         }
@@ -36,10 +36,29 @@ namespace SC.API.DAL.Repositories
             foreach (Player player in players)
             {
                 player.Handicap = this.context.PlayerTournament
-                    .Single(lp => lp.TournamentId == id && lp.PlayerId == player.Id).Handicap;
+                    .Single(lp => lp.TournamentId == id && lp.PlayerId == player.Id)
+                    .Handicap;
             }
 
             return players;
+        }
+
+        public IEnumerable<Group> GetGroupsOfTournamentById(Guid id)
+        {
+            List<Group> groups = this.context.Groups
+                .Where(g => g.TournamentId == id)
+                .ToList();
+
+            return groups;
+        }
+
+        public IEnumerable<Frame> GetFramesOfTournamentById(Guid id)
+        {
+            List<Frame> frames = this.context.Frames
+                .Where(f => f.TournamentId == id)
+                .ToList();
+
+            return frames;
         }
     }
 }
