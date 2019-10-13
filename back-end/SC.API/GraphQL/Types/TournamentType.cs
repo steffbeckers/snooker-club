@@ -10,7 +10,7 @@ namespace SC.API.GraphQL.Types
 {
     public class TournamentType : ObjectGraphType<Tournament>
     {
-        public TournamentType(TournamentRepository tournamentRepository, LeagueRepository leagueRepository)
+        public TournamentType(TournamentRepository tournamentRepository, LeagueRepository leagueRepository, PlayerRepository playerRepository)
         {
             Field(x => x.Id, type: typeof(IdGraphType));
             Field(x => x.Name, nullable: true).Description("The name of the tournament");
@@ -30,6 +30,26 @@ namespace SC.API.GraphQL.Types
             Field<ListGraphType<PlayerType>>(
                 "players",
                 resolve: context => tournamentRepository.GetPlayersOfTournamentById(context.Source.Id)
+            );
+
+            Field(x => x.WinnerId, type: typeof(IdGraphType), nullable: true);
+            Field<PlayerType>(
+                "winner",
+                resolve: context => {
+                    if (context.Source.WinnerId != null)
+                        return playerRepository.GetById((Guid)context.Source.WinnerId);
+                    return null;
+                }
+            );
+
+            Field(x => x.RunnerUpId, type: typeof(IdGraphType), nullable: true);
+            Field<PlayerType>(
+                "runnerUp",
+                resolve: context => {
+                    if (context.Source.RunnerUpId != null)
+                        return playerRepository.GetById((Guid)context.Source.RunnerUpId);
+                    return null;
+                }
             );
         }
     }

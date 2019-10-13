@@ -15,6 +15,7 @@ namespace SC.API.GraphQL.Types
             Field(x => x.Id, type: typeof(IdGraphType));
             Field(x => x.FirstName, nullable: true).Description("The first name of the player");
             Field(x => x.LastName, nullable: true).Description("The last name of the player");
+            Field(x => x.Handicap, nullable: true).Description("The handicap value of the player within league, tournament or frame");
 
             // TODO: Add authorization on user retrieval?
             Field(x => x.UserId, type: typeof(IdGraphType), nullable: true);
