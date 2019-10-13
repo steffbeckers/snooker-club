@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: snooker-club-ingress
+  namespace: snooker-club
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "true"
+    kubernetes.io/tls-acme: "true"
+    certmanager.k8s.io/cluster-issuer: "letsencrypt"
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: karteria.sc.steffbeckers.eu
+    http:
+      paths:
+      # - path: /
+      #   backend:
+      #     serviceName: snooker-club-app
+      #     servicePort: 80
+      - path: /api
+        backend:
+          serviceName: snooker-club-api
+          servicePort: 80
+  tls:
+  - hosts:
+    - karteria.sc.steffbeckers.eu
+    secretName: steffbeckers.eu-tls
