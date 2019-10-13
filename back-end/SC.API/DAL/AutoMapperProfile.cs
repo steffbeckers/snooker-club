@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using SC.API.Models;
-using SC.API.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +11,8 @@ namespace SC.API.DAL
     {
         public AutoMapperProfile()
         {
-            CreateMap<League, LeagueVM>();
-            CreateMap<LeagueVM, League>();
+            //CreateMap<League, LeagueVM>();
+            //CreateMap<LeagueVM, League>();
         }
     }
 }
