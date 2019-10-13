@@ -1,31 +1,28 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AutoMapper;
+using GraphQL;
+using GraphQL.Server;
+using GraphQL.Server.Ui.Playground;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore;
-using SC.API.DAL;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using System.Text.Json;
-using AutoMapper;
-using SC.API.Models;
-using Microsoft.AspNetCore.Identity;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using SC.API.BLL;
+using SC.API.DAL;
 using SC.API.DAL.Repositories;
-using GraphQL;
 using SC.API.GraphQL;
-using GraphQL.Server;
-using GraphQL.Server.Ui.Playground;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
+using SC.API.Models;
+using SC.API.Services;
+using System;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace SC.API
 {
@@ -55,6 +52,9 @@ namespace SC.API
             services.AddScoped<TournamentRepository>();
             services.AddScoped<UserRepository>();
 
+            // BLLs
+            services.AddScoped<SettingBLL>();
+
             // GraphQL
             services.AddScoped<IDependencyResolver>(s =>
                 new FuncDependencyResolver(s.GetRequiredService));
@@ -64,6 +64,9 @@ namespace SC.API
                 options.ExposeExceptions = true;
             }).AddGraphTypes(ServiceLifetime.Scoped)
             .AddUserContextBuilder(httpContext => httpContext.User);
+
+            // CORS
+            services.AddCors();
 
             // Authentication
             services.AddIdentity<User, IdentityRole<Guid>>()
@@ -123,6 +126,10 @@ namespace SC.API
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
 
+            // Services
+            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+            services.AddSingleton<IEmailSender, EmailSender>();
+
             // MVC
             services.AddControllers()
                 .AddJsonOptions(options =>
@@ -153,6 +160,17 @@ namespace SC.API
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseExceptionHandler(appBuilder =>
+                {
+                    appBuilder.Run(async context =>
+                    {
+                        context.Response.StatusCode = 500;
+                        await context.Response.WriteAsync("An unexpected fault happened. Try again later.");
+                    });
+                });
+            }
 
             // Update database migrations on startup
             UpdateDatabase(app);
@@ -161,8 +179,13 @@ namespace SC.API
             app.UseGraphQL<SCSchema>();
             app.UseGraphQLPlayground(new GraphQLPlaygroundOptions());
 
-            // MVC
-            app.UseRouting();
+            // CORS
+            app.UseCors(options =>
+            {
+                options.WithOrigins(Configuration.GetValue<string>("AllowedHosts"))
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
 
             // Authentication and Authorization
             app.UseAuthentication();
@@ -170,6 +193,7 @@ namespace SC.API
             CreateDefaultRolesAndAdminUser(serviceProvider);
 
             // MVC
+            app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

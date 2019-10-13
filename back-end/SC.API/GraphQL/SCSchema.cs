@@ -12,6 +12,7 @@ namespace SC.API.GraphQL
         public SCSchema(IDependencyResolver resolver) : base(resolver)
         {
             Query = resolver.Resolve<SCQuery>();
+            Mutation = resolver.Resolve<SCMutation>();
         }
     }
 }

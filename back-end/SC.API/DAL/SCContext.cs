@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -198,6 +199,84 @@ namespace SC.API.DAL
             //// Properties
             modelBuilder.Entity<Setting>().Property(e => e.Key).IsRequired();
             modelBuilder.Entity<Setting>().Property(e => e.Value);
+        }
+
+        public override int SaveChanges()
+        {
+            SoftDeleteLogic();
+            TimeStampsLogic();
+
+            return base.SaveChanges();
+        }
+
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            SoftDeleteLogic();
+            TimeStampsLogic();
+
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        private void SoftDeleteLogic()
+        {
+            foreach (var entry in ChangeTracker.Entries())
+            {
+                // Models that have soft delete
+                if (entry.Entity.GetType() == typeof(Break) ||
+                    entry.Entity.GetType() == typeof(Frame) ||
+                    entry.Entity.GetType() == typeof(FramePlayer) ||
+                    entry.Entity.GetType() == typeof(Group) ||
+                    entry.Entity.GetType() == typeof(GroupPlayer) ||
+                    entry.Entity.GetType() == typeof(League) ||
+                    entry.Entity.GetType() == typeof(LeaguePlayer) ||
+                    entry.Entity.GetType() == typeof(Player) ||
+                    entry.Entity.GetType() == typeof(PlayerTournament) ||
+                    entry.Entity.GetType() == typeof(Setting) ||
+                    entry.Entity.GetType() == typeof(Tournament))
+                {
+                    switch (entry.State)
+                    {
+                        case EntityState.Added:
+                            entry.CurrentValues["DeletedOn"] = null;
+                            break;
+                        case EntityState.Deleted:
+                            entry.State = EntityState.Modified;
+                            entry.CurrentValues["DeletedOn"] = DateTime.Now;
+                            break;
+                    }
+                }
+            }
+        }
+
+        private void TimeStampsLogic()
+        {
+            foreach (var entry in ChangeTracker.Entries())
+            {
+                // Models that have soft delete
+                if (entry.Entity.GetType() == typeof(Break) ||
+                    entry.Entity.GetType() == typeof(Frame) ||
+                    entry.Entity.GetType() == typeof(FramePlayer) ||
+                    entry.Entity.GetType() == typeof(Group) ||
+                    entry.Entity.GetType() == typeof(GroupPlayer) ||
+                    entry.Entity.GetType() == typeof(League) ||
+                    entry.Entity.GetType() == typeof(LeaguePlayer) ||
+                    entry.Entity.GetType() == typeof(Player) ||
+                    entry.Entity.GetType() == typeof(PlayerTournament) ||
+                    entry.Entity.GetType() == typeof(Setting) ||
+                    entry.Entity.GetType() == typeof(Tournament))
+                {
+                    switch (entry.State)
+                    {
+                        case EntityState.Added:
+                            entry.CurrentValues["CreatedOn"] = DateTime.Now;
+                            entry.CurrentValues["ModifiedOn"] = DateTime.Now;
+                            break;
+                        case EntityState.Modified:
+                            entry.CurrentValues["ModifiedOn"] = DateTime.Now;
+                            break;
+                    }
+                }
+            }
         }
     }
 }
