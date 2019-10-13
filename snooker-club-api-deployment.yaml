@@ -28,7 +28,7 @@ spec:
         name: snooker-club-api
         ports:
         - containerPort: 80
-          name: snooker-club-api
+          name: http
 ---
 apiVersion: v1
 kind: Service
