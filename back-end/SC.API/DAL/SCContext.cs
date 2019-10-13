@@ -17,7 +17,19 @@ namespace SC.API.DAL
         {
         }
 
+        public DbSet<Break> Breaks { get; set; }
+        public DbSet<Frame> Frames { get; set; }
+        public DbSet<FramePlayer> FramePlayer { get; set; }
+        public DbSet<Group> Groups { get; set; }
+        public DbSet<GroupPlayer> GroupPlayer { get; set; }
         public DbSet<League> Leagues { get; set; }
+        public DbSet<LeaguePlayer> LeaguePlayer { get; set; }
+        public DbSet<Player> Players { get; set; }
+        public DbSet<PlayerTournament> PlayerTournament { get; set; }
+        public DbSet<Setting> Settings { get; set; }
+        public DbSet<Tournament> Tournaments { get; set; }
+        // INFO: Users are provided in the base class
+        //public DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

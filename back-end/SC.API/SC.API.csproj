@@ -11,6 +11,8 @@
     <Compile Remove="Migrations\20191008235745_Identity.Designer.cs" />
     <Compile Remove="Migrations\20191009000453_Identity2.cs" />
     <Compile Remove="Migrations\20191009000453_Identity2.Designer.cs" />
+    <Compile Remove="Migrations\20191013001716_AllModelsAdded.cs" />
+    <Compile Remove="Migrations\20191013001716_AllModelsAdded.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

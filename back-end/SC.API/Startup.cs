@@ -47,6 +47,9 @@ namespace SC.API
 
             // Repositories
             services.AddScoped<LeagueRepository>();
+            services.AddScoped<PlayerRepository>();
+            services.AddScoped<TournamentRepository>();
+            services.AddScoped<UserRepository>();
 
             // GraphQL
             services.AddScoped<IDependencyResolver>(s =>
