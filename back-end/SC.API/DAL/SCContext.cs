@@ -1,20 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using SC.API.Models;
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SC.API.DAL
 {
     public class SCContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     {
-        public SCContext (DbContextOptions<SCContext> options) : base(options)
+        public SCContext(DbContextOptions<SCContext> options) : base(options)
         {
         }
 
@@ -63,7 +61,7 @@ namespace SC.API.DAL
             {
                 e.ToTable("UserLogins");
                 // In case you changed the TKey type
-                e.HasKey(key => new { key.ProviderKey, key.LoginProvider });       
+                e.HasKey(key => new { key.ProviderKey, key.LoginProvider });
             });
             modelBuilder.Entity<IdentityRoleClaim<Guid>>(e => e.ToTable("RoleClaims"));
             modelBuilder.Entity<IdentityUserToken<Guid>>(e =>

@@ -1,26 +1,91 @@
 ﻿using GraphQL.Types;
 using SC.API.BLL;
-using SC.API.DAL.Repositories;
 using SC.API.GraphQL.Types;
 using SC.API.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SC.API.GraphQL
 {
     public class SCMutation : ObjectGraphType
     {
-        public SCMutation(SettingBLL settingBLL)
+        public SCMutation(
+            LeagueBLL leagueBLL,
+            SettingBLL settingBLL
+        )
         {
+            #region Leagues
+
+            FieldAsync<LeagueType>(
+                "createLeague",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<LeagueInputType>>
+                    {
+                        Name = "league"
+                    }
+                ),
+                resolve: async context =>
+                {
+                    League league = context.GetArgument<League>("league");
+
+                    return await context.TryAsyncResolve(
+                        async c => await leagueBLL.CreateLeagueAsync(league)
+                    );
+                }
+            );
+
+            FieldAsync<LeagueType>(
+                "updateLeague",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<IdGraphType>>
+                    {
+                        Name = "id"
+                    },
+                    new QueryArgument<NonNullGraphType<LeagueInputType>>
+                    {
+                        Name = "league"
+                    }
+                ),
+                resolve: async context =>
+                {
+                    Guid id = context.GetArgument<Guid>("id");
+                    League league = context.GetArgument<League>("league");
+
+                    return await context.TryAsyncResolve(
+                        async c => await leagueBLL.UpdateLeagueAsync(id, league)
+                    );
+                }
+            );
+
+            FieldAsync<BooleanGraphType>(
+                "removeLeague",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<IdGraphType>>
+                    {
+                        Name = "id"
+                    }
+                ),
+                resolve: async context =>
+                {
+                    Guid id = context.GetArgument<Guid>("id");
+
+                    return await context.TryAsyncResolve(
+                        async c => await leagueBLL.RemoveLeagueAsync(id)
+                    );
+                }
+            );
+
+            #endregion
+
             #region Settings
 
             FieldAsync<SettingType>(
                 "createSetting",
-                arguments: new QueryArguments(new QueryArgument<NonNullGraphType<SettingInputType>> {
-                    Name = "setting"
-                }),
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<SettingInputType>>
+                    {
+                        Name = "setting"
+                    }
+                ),
                 resolve: async context =>
                 {
                     Setting setting = context.GetArgument<Setting>("setting");
@@ -30,6 +95,7 @@ namespace SC.API.GraphQL
                     );
                 }
             );
+
             FieldAsync<SettingType>(
                 "updateSetting",
                 arguments: new QueryArguments(
@@ -52,6 +118,7 @@ namespace SC.API.GraphQL
                     );
                 }
             );
+
             FieldAsync<BooleanGraphType>(
                 "removeSetting",
                 arguments: new QueryArguments(

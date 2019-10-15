@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using System;
 using System.Threading.Tasks;
 
 namespace SC.API.Services

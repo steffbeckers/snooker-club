@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
-using SC.API.Services;
-using SC.API.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using SC.API.DAL.Repositories;
 using SC.API.Models;
+using SC.API.Services;
+using SC.API.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -15,7 +16,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using SC.API.DAL.Repositories;
 
 namespace CRM.API.Controllers
 {
@@ -97,6 +97,12 @@ namespace CRM.API.Controllers
                         claims.Add(new Claim(ClaimTypes.Role, role));
                     }
 
+                    // Retrieve player if player type user
+                    if (currentUser.PlayerId != null)
+                    {
+                        currentUser.Player = await playerRepository.GetByIdAsync((Guid)currentUser.PlayerId);
+                    }
+
                     // Authentication successful => Generate jwt token
                     // TODO: This code could be moved to another layer
                     var tokenHandler = new JwtSecurityTokenHandler();
@@ -105,7 +111,7 @@ namespace CRM.API.Controllers
                     {
                         Subject = new ClaimsIdentity(claims),
                         Expires = DateTime.UtcNow.AddMinutes(double.Parse(configuration.GetSection("Authentication").GetValue<string>("TokenExpiresInMinutes"))),
-                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)    
+                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                     };
 
                     // Return user with token
@@ -150,6 +156,10 @@ namespace CRM.API.Controllers
         public async Task<IActionResult> Me()
         {
             User currentUser = await userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                return Unauthorized();
+            }
 
             // Retrieve roles of user
             currentUser.Roles = (List<string>)await userManager.GetRolesAsync(currentUser);
@@ -170,7 +180,8 @@ namespace CRM.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new User() {
+                var user = new User()
+                {
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     UserName = model.Username,

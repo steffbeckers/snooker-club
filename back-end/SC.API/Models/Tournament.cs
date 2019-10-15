@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SC.API.Models
 {
@@ -20,7 +18,7 @@ namespace SC.API.Models
 
         public Guid? LeagueId { get; set; }
         public League League { get; set; }
-        
+
         public Guid? WinnerId { get; set; }
         public Player Winner { get; set; }
 

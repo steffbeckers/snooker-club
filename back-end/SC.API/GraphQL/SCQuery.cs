@@ -1,12 +1,7 @@
 ﻿using GraphQL.Types;
-using SC.API.DAL;
 using SC.API.DAL.Repositories;
 using SC.API.GraphQL.Types;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace SC.API.GraphQL
 {
@@ -56,9 +51,11 @@ namespace SC.API.GraphQL
             // Users
             Field<ListGraphType<UserType>>(
                 "users",
-                resolve: context => {
-                    ClaimsPrincipal user = (ClaimsPrincipal)context.UserContext;
-                    if (!user.IsInRole("Admin")) { return null; }
+                resolve: context =>
+                {
+                    // TODO
+                    //ClaimsPrincipal user = (ClaimsPrincipal)context.UserContext;
+                    //if (!user.IsInRole("Admin")) { return null; }
 
                     return userRepository.Get();
                 }
@@ -66,9 +63,11 @@ namespace SC.API.GraphQL
             Field<UserType>(
                 "user",
                 arguments: new QueryArguments(new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id" }),
-                resolve: context => {
-                    ClaimsPrincipal user = (ClaimsPrincipal)context.UserContext;
-                    if (!user.IsInRole("Admin")) { return null; }
+                resolve: context =>
+                {
+                    // TODO
+                    //ClaimsPrincipal user = (ClaimsPrincipal)context.UserContext;
+                    //if (!user.IsInRole("Admin")) { return null; }
 
                     return userRepository.GetById(context.GetArgument<Guid>("id"));
                 }

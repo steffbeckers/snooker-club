@@ -2,9 +2,6 @@
 using SC.API.DAL.Repositories;
 using SC.API.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SC.API.GraphQL.Types
 {
@@ -24,7 +21,8 @@ namespace SC.API.GraphQL.Types
             Field(x => x.TournamentId, type: typeof(IdGraphType), nullable: true);
             Field<TournamentType>(
                 "tournament",
-                resolve: context => {
+                resolve: context =>
+                {
                     if (context.Source.TournamentId != null)
                         return tournamentRepository.GetById((Guid)context.Source.TournamentId);
                     return null;
@@ -34,7 +32,8 @@ namespace SC.API.GraphQL.Types
             Field(x => x.GroupId, type: typeof(IdGraphType), nullable: true);
             Field<GroupType>(
                 "group",
-                resolve: context => {
+                resolve: context =>
+                {
                     if (context.Source.GroupId != null)
                         return groupRepository.GetById((Guid)context.Source.GroupId);
                     return null;
@@ -44,7 +43,8 @@ namespace SC.API.GraphQL.Types
             Field(x => x.WinnerId, type: typeof(IdGraphType), nullable: true);
             Field<PlayerType>(
                 "winner",
-                resolve: context => {
+                resolve: context =>
+                {
                     if (context.Source.WinnerId != null)
                         return playerRepository.GetById((Guid)context.Source.WinnerId);
                     return null;

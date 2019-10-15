@@ -1,10 +1,6 @@
 ﻿using GraphQL.Types;
 using SC.API.DAL.Repositories;
 using SC.API.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SC.API.GraphQL.Types
 {
@@ -15,7 +11,7 @@ namespace SC.API.GraphQL.Types
             Field(x => x.Id, type: typeof(IdGraphType));
             Field(x => x.Name).Description("The name of the league");
             Field(x => x.DisplayName).Description("The display name of the league that should be used in app UI");
-            Field(x => x.Season);
+            Field(x => x.Season, nullable: true);
             Field(x => x.StartDate, nullable: true);
             Field(x => x.EndDate, nullable: true);
 

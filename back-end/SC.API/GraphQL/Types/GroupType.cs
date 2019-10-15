@@ -2,9 +2,6 @@
 using SC.API.DAL.Repositories;
 using SC.API.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SC.API.GraphQL.Types
 {
@@ -19,7 +16,8 @@ namespace SC.API.GraphQL.Types
             Field(x => x.TournamentId, type: typeof(IdGraphType), nullable: true);
             Field<TournamentType>(
                 "tournament",
-                resolve: context => {
+                resolve: context =>
+                {
                     if (context.Source.TournamentId != null)
                         return tournamentRepository.GetById((Guid)context.Source.TournamentId);
                     return null;

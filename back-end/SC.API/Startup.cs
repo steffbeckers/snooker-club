@@ -53,6 +53,7 @@ namespace SC.API
             services.AddScoped<UserRepository>();
 
             // BLLs
+            services.AddScoped<LeagueBLL>();
             services.AddScoped<SettingBLL>();
 
             // GraphQL
@@ -61,18 +62,21 @@ namespace SC.API
             services.AddScoped<SCSchema>();
             services.AddGraphQL(options =>
             {
-                options.ExposeExceptions = true;
+                options.ExposeExceptions = true; // TODO: Only in DEV
             }).AddGraphTypes(ServiceLifetime.Scoped)
-            .AddUserContextBuilder(httpContext => httpContext.User);
+            .AddUserContextBuilder(httpContext => httpContext.User)
+            .AddWebSockets();
 
             // CORS
             services.AddCors();
 
-            // Authentication
+            // Authentication and Authorization
+            services.AddAuthentication();
             services.AddIdentity<User, IdentityRole<Guid>>()
                 .AddRoleManager<RoleManager<IdentityRole<Guid>>>()
                 .AddEntityFrameworkStores<SCContext>()
                 .AddDefaultTokenProviders();
+            services.AddAuthorization();
 
             services.Configure<IdentityOptions>(options =>
             {
@@ -135,7 +139,7 @@ namespace SC.API
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.IgnoreNullValues = true;
-                    options.JsonSerializerOptions.MaxDepth = 3;
+                    options.JsonSerializerOptions.MaxDepth = 0;
                     // camelCase
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                 });
@@ -175,7 +179,11 @@ namespace SC.API
             // Update database migrations on startup
             UpdateDatabase(app);
 
+            // Web sockets
+            app.UseWebSockets();
+
             // GraphQL
+            app.UseGraphQLWebSockets<SCSchema>("/graphql");
             app.UseGraphQL<SCSchema>();
             app.UseGraphQLPlayground(new GraphQLPlaygroundOptions());
 

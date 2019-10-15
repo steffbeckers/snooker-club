@@ -2,10 +2,6 @@
 using SC.API.DAL.Repositories;
 using SC.API.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace SC.API.GraphQL.Types
 {
@@ -23,9 +19,11 @@ namespace SC.API.GraphQL.Types
             Field(x => x.UserId, type: typeof(IdGraphType), nullable: true);
             Field<UserType>(
                 "user",
-                resolve: context => {
-                    ClaimsPrincipal user = (ClaimsPrincipal)context.UserContext;
-                    if (!user.IsInRole("Admin")) { return null; }
+                resolve: context =>
+                {
+                    // TODO
+                    //ClaimsPrincipal user = (ClaimsPrincipal)context.UserContext;
+                    //if (!user.IsInRole("Admin")) { return null; }
 
                     if (context.Source.UserId != null)
                         return userRepository.GetById((Guid)context.Source.UserId);

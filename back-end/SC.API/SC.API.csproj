@@ -19,6 +19,7 @@
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="GraphQL" Version="2.4.0" />
     <PackageReference Include="GraphQL.Server.Transports.AspNetCore" Version="3.4.0" />
+    <PackageReference Include="GraphQL.Server.Transports.WebSockets" Version="3.4.0" />
     <PackageReference Include="GraphQL.Server.Ui.Playground" Version="3.4.0" />
     <PackageReference Include="MailKit" Version="2.3.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
