@@ -1,26 +1,25 @@
 <template>
   <div class="home">
-    <div v-for="tournament in tournaments" :key="tournament.id">
-      {{ tournament.displayName }}
-    </div>
+    <!-- <HelloWorld /> -->
   </div>
 </template>
 
 <script>
-import gql from 'graphql-tag'
+// import HelloWorldVue from '../components/HelloWorld.vue';
 
 export default {
   name: 'home',
-  data: () => ({
-    tournaments: [],
-  }),
-  apollo: {
-    tournaments: gql`query {
-      tournaments {
-        id
-        displayName
-      }
-    }`,
+  mounted() {
+    fetch("http://localhost:5000/graphql?query={ leagues { id } }")
+      .then(res => {
+        return res.json();
+      })
+      .then(res => {
+        console.log(res);
+      });
   },
+  // components: {
+  //   HelloWorld: HelloWorldVue
+  // }
 }
 </script>

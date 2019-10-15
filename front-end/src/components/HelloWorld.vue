@@ -4,6 +4,12 @@
       text-center
       wrap
     >
+      <v-flex xs12 v-if="league">
+        <span>
+          {{ league.displayName }}
+        </span>
+      </v-flex>
+
       <v-flex xs12>
         <v-img
           :src="require('../assets/logo.svg')"
@@ -85,8 +91,11 @@
 </template>
 
 <script>
+import gql from 'graphql-tag'
+
 export default {
   data: () => ({
+    league: {},
     ecosystem: [
       {
         text: 'vuetify-loader',
@@ -138,5 +147,19 @@ export default {
       },
     ],
   }),
+  apollo: {
+    league: gql`
+      query {
+        league(id: "d15a8c4f-c611-457e-1620-08d74c45f803") {
+          id
+          name
+          displayName
+          season
+          startDate
+          endDate
+        }
+      }
+    `
+  },
 };
 </script>
