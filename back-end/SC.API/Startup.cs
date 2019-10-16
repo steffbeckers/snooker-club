@@ -38,6 +38,9 @@ namespace SC.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // CORS
+            services.AddCors();
+
             // Connection to the SnookerClub database
             services.AddDbContext<SCContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("SCContext")));
@@ -63,9 +66,9 @@ namespace SC.API
             services.AddGraphQL(options =>
             {
                 options.ExposeExceptions = true; // TODO: Only in DEV
-            }).AddGraphTypes(ServiceLifetime.Scoped);
-            //.AddUserContextBuilder(httpContext => httpContext.User)
-            //.AddWebSockets()
+            }).AddGraphTypes(ServiceLifetime.Scoped)
+            .AddUserContextBuilder(httpContext => httpContext.User)
+            .AddWebSockets();
 
             // Authentication and Authorization
             services.AddAuthentication();
@@ -131,9 +134,6 @@ namespace SC.API
             services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
             services.AddSingleton<IEmailSender, EmailSender>();
 
-            // CORS
-            services.AddCors();
-
             // MVC
             services.AddControllers()
                 .AddJsonOptions(options =>
@@ -160,6 +160,13 @@ namespace SC.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
+            // CORS
+            app.UseCors(options => {
+                options.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -180,23 +187,16 @@ namespace SC.API
             UpdateDatabase(app);
 
             // Web sockets
-            //app.UseWebSockets();
+            app.UseWebSockets();
 
             // GraphQL
-            //app.UseGraphQLWebSockets<SCSchema>("/graphql");
+            app.UseGraphQLWebSockets<SCSchema>("/graphql");
             app.UseGraphQL<SCSchema>();
             app.UseGraphQLPlayground(new GraphQLPlaygroundOptions());
 
             // Authentication
             app.UseAuthentication();
             CreateDefaultRolesAndAdminUser(serviceProvider);
-
-            // CORS
-            app.UseCors(options => {
-                options.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-            });
 
             // MVC
             app.UseRouting();
