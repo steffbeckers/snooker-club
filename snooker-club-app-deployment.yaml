@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snooker-club-app
+  namespace: snooker-club
+  labels:
+    app: snooker-club-app
+    release: snooker-club-app
+spec:
+  selector:
+    matchLabels:
+      app: snooker-club-app
+      release: snooker-club-app
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: snooker-club-app
+        release: snooker-club-app
+        tier: frontend
+    spec:
+      imagePullSecrets:
+        - name: dockerconfig
+      containers:
+        - image: registry.gitlab.com/steffbeckers/snooker-club/app
+          name: snooker-club-app
+          ports:
+            - containerPort: 80
+              name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: snooker-club-app
+  namespace: snooker-club
+  labels:
+    app: snooker-club-app
+    release: snooker-club-app
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: snooker-club-app
+    release: snooker-club-app
+    tier: frontend
