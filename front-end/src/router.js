@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
+
+// Views
+import Leagues from './views/Leagues.vue'
+import League from './views/League.vue'
 
 Vue.use(Router)
 
@@ -9,8 +12,17 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: Home
+      redirect: '/leagues'
+    },
+    {
+      path: '/leagues',
+      name: 'Leagues',
+      component: Leagues
+    },
+    {
+      path: '/leagues/:id',
+      name: 'League',
+      component: League
     }
   ]
 })
