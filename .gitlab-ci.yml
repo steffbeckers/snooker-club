@@ -19,13 +19,12 @@ before_script:
 build:
   stage: build
   script:
-    # - docker build --pull -t "$CI_REGISTRY_IMAGE/app" ./angular/CRM
-    # - docker push "$CI_REGISTRY_IMAGE/app"
+    - docker build --pull -t "$CI_REGISTRY_IMAGE/app" ./front-end
+    - docker push "$CI_REGISTRY_IMAGE/app"
     - docker build --pull -t "$CI_REGISTRY_IMAGE/api" ./back-end/SC.API
     - docker push "$CI_REGISTRY_IMAGE/api"
   only:
     - master
-
 # deploy stage
 
 # deploy:
