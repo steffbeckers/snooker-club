@@ -72,11 +72,11 @@ namespace SC.API
 
             // Authentication and Authorization
             services.AddAuthentication();
+            services.AddAuthorization();
             services.AddIdentity<User, IdentityRole<Guid>>()
                 .AddRoleManager<RoleManager<IdentityRole<Guid>>>()
                 .AddEntityFrameworkStores<SCContext>()
                 .AddDefaultTokenProviders();
-            services.AddAuthorization();
 
             services.Configure<IdentityOptions>(options =>
             {
@@ -194,8 +194,9 @@ namespace SC.API
             app.UseGraphQL<SCSchema>();
             app.UseGraphQLPlayground(new GraphQLPlaygroundOptions());
 
-            // Authentication
+            // Authentication and Authorization
             app.UseAuthentication();
+            app.UseAuthorization();
             CreateDefaultRolesAndAdminUser(serviceProvider);
 
             // MVC

@@ -13,10 +13,10 @@ spec:
   - host: karteria.sc.steffbeckers.eu
     http:
       paths:
-      # - path: /
-      #   backend:
-      #     serviceName: snooker-club-app
-      #     servicePort: 80
+      - path: /
+        backend:
+          serviceName: snooker-club-app
+          servicePort: 80
       - path: /graphql
         backend:
           serviceName: snooker-club-api

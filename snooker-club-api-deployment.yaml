@@ -22,19 +22,19 @@ spec:
         tier: backend
     spec:
       imagePullSecrets:
-      - name: dockerconfig
+        - name: dockerconfig
       containers:
-      - image: registry.gitlab.com/steffbeckers/snooker-club/api
-        name: snooker-club-api
-        ports:
-        - containerPort: 80
-          name: http
+        - image: registry.gitlab.com/steffbeckers/snooker-club/api
+          name: snooker-club-api
+          ports:
+            - containerPort: 80
+              name: http
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: snooker-club-api
-  namespace: crm
+  namespace: snooker-club
   labels:
     app: snooker-club-api
     release: snooker-club-api
