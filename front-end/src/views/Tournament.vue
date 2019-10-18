@@ -45,6 +45,35 @@ export default {
             }
             date
             displayName
+            players {
+              id
+              firstName
+              lastName
+              handicap
+            }
+            frames {
+              id
+              players {
+                id
+                firstName
+                lastName
+                handicap
+                score
+              }
+              winner {
+                id
+              }
+            }
+            winner {
+              id
+              firstName
+              lastName
+            }
+            runnerUp {
+              id
+              firstName
+              lastName
+            }
           }
         }
       `,
