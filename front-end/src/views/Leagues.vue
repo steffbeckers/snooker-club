@@ -1,8 +1,15 @@
 <template>
   <div class="leagues-view">
     <v-toolbar class="elevation-0">
-      <v-toolbar-title>Leagues</v-toolbar-title>
-      <!-- <v-spacer></v-spacer>
+      <v-toolbar-title class="headline">Competities</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-toolbar-items>
+        <v-btn text>Toevoegen</v-btn>
+      </v-toolbar-items>
+      <v-btn icon>
+        <v-icon>mdi-magnify</v-icon>
+      </v-btn>
+      <!-- 
       <v-toolbar-items>
         <v-btn text>Link 1</v-btn>
         <v-btn text>Link 2</v-btn>
@@ -18,11 +25,12 @@
         <v-btn icon>
           <v-icon>mdi-plus-circle</v-icon>
         </v-btn>
-      </template> -->
+      </template>
+      -->
     </v-toolbar>
     <v-container fluid>
       <v-layout v-if="leagues" wrap>
-        <v-flex v-for="league in leagues" :key="league.id" xs4 class="ma-2">
+        <v-flex v-for="league in leagues" :key="league.id" xs12 md4 class="ma-2">
           <v-card @click="$router.push({ name: 'League', params: { id: league.id }})" tile style="cursor: pointer">
             <v-card-title>{{ league.displayName }}</v-card-title>
             <v-card-subtitle v-if="league.season">{{ league.season }}</v-card-subtitle>

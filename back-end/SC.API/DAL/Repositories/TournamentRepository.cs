@@ -20,7 +20,9 @@ namespace SC.API.DAL.Repositories
 
         public IEnumerable<Tournament> GetByLeagueId(Guid leagueId)
         {
-            return this.context.Tournaments.Where(a => a.LeagueId == leagueId).ToList();
+            return this.context.Tournaments.Where(t => t.LeagueId == leagueId)
+                                           .OrderByDescending(d => d.Date)
+                                           .ToList();
         }
 
         public IEnumerable<Player> GetPlayersOfTournamentById(Guid id)

@@ -34,17 +34,17 @@
       <v-list>
         <v-list-item :to="{ name: 'Leagues' }" exact link>
           <v-list-item-content>
-            <v-list-item-title>Leagues</v-list-item-title>
+            <v-list-item-title>Competities</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item link>
           <v-list-item-content>
-            <v-list-item-title>Tournaments</v-list-item-title>
+            <v-list-item-title>Toernooien</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item link>
           <v-list-item-content>
-            <v-list-item-title>Players</v-list-item-title>
+            <v-list-item-title>Spelers</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item link>
@@ -59,7 +59,7 @@
     </v-content>
     <v-footer dark padless app>
       <v-col
-        class="text-center pa-1"
+        class="text-center body-2 pa-1"
         cols="12"
       >
         &copy; {{ new Date().getFullYear() }} — <strong><a class="white--text" href="https://steffbeckers.eu" target="_blank">steffbeckers.eu</a></strong>
