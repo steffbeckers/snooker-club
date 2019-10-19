@@ -57,6 +57,7 @@ namespace SC.API
 
             // BLLs
             services.AddScoped<LeagueBLL>();
+            services.AddScoped<PlayerBLL>();
             services.AddScoped<SettingBLL>();
 
             // GraphQL

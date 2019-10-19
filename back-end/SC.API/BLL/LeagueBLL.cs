@@ -55,6 +55,16 @@ namespace SC.API.BLL
             return await this.leagueRepository.UpdateAsync(league);
         }
 
+        public async Task<League> LinkPlayerToLeagueAsync(LeaguePlayer leaguePlayer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<League> UnlinkPlayerFromLeagueAsync(LeaguePlayer leaguePlayer)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<bool> RemoveLeagueAsync(Guid id)
         {
             // Retrieve existing

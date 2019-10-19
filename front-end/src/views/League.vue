@@ -33,7 +33,7 @@
                   </thead>
                   <tbody>
                     <tr v-for="tournament in league.tournaments" :key="tournament.id" @click="$router.push({ name: 'Tournament', params: { id: tournament.id }})">
-                      <td>{{ tournament.date }}</td>
+                      <td>{{ tournament.date | formatDateDDMM }}</td>
                       <td>
                         <span v-for="(player, index) in tournament.players" :key="player.id">
                           {{ player.firstName }} {{ player.lastName }}
@@ -180,6 +180,7 @@ export default {
   },
   methods: {
     updateHandicapOfPlayer(player) {
+      // TODO
       console.log(player);
     }
   }

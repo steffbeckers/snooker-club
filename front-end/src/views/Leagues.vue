@@ -60,8 +60,6 @@ export default {
           name
           displayName
           season
-          startDate
-          endDate
         }
       }
     `
