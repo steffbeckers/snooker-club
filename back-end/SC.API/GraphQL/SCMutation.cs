@@ -11,7 +11,8 @@ namespace SC.API.GraphQL
         public SCMutation(
             LeagueBLL leagueBLL,
             PlayerBLL playerBLL,
-            SettingBLL settingBLL
+            SettingBLL settingBLL,
+            TournamentBLL tournamentBLL
         )
         {
             #region Leagues
@@ -233,6 +234,69 @@ namespace SC.API.GraphQL
 
                     return await context.TryAsyncResolve(
                         async c => await settingBLL.RemoveSettingAsync(id)
+                    );
+                }
+            );
+
+            #endregion
+
+            #region Tournaments
+
+            FieldAsync<TournamentType>(
+                "createTournament",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<TournamentInputType>>
+                    {
+                        Name = "tournament"
+                    }
+                ),
+                resolve: async context =>
+                {
+                    Tournament tournament = context.GetArgument<Tournament>("tournament");
+
+                    return await context.TryAsyncResolve(
+                        async c => await tournamentBLL.CreateTournamentAsync(tournament)
+                    );
+                }
+            );
+
+            FieldAsync<TournamentType>(
+                "updateTournament",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<IdGraphType>>
+                    {
+                        Name = "id"
+                    },
+                    new QueryArgument<NonNullGraphType<TournamentInputType>>
+                    {
+                        Name = "tournament"
+                    }
+                ),
+                resolve: async context =>
+                {
+                    Guid id = context.GetArgument<Guid>("id");
+                    Tournament tournament = context.GetArgument<Tournament>("tournament");
+
+                    return await context.TryAsyncResolve(
+                        async c => await tournamentBLL.UpdateTournamentAsync(id, tournament)
+                    );
+                }
+            );
+
+            FieldAsync<BooleanGraphType>(
+                "removeTournament",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<IdGraphType>>
+                    {
+                        Name = "id"
+                    }
+                ),
+                resolve: async context =>
+                {
+                    Guid id = context.GetArgument<Guid>("id");
+
+                    return await context.TryAsyncResolve(
+                        async c => await tournamentBLL.RemoveTournamentAsync(id)
                     );
                 }
             );

@@ -25,21 +25,6 @@ namespace SC.API.GraphQL.Types
                 }
             );
 
-            Field<ListGraphType<PlayerType>>(
-                "players",
-                resolve: context => tournamentRepository.GetPlayersOfTournamentById(context.Source.Id)
-            );
-
-            Field<ListGraphType<GroupType>>(
-                "groups",
-                resolve: context => tournamentRepository.GetGroupsOfTournamentById(context.Source.Id)
-            );
-
-            Field<ListGraphType<FrameType>>(
-                "frames",
-                resolve: context => tournamentRepository.GetFramesOfTournamentById(context.Source.Id)
-            );
-
             Field(x => x.WinnerId, type: typeof(IdGraphType), nullable: true);
             Field<PlayerType>(
                 "winner",
@@ -60,6 +45,21 @@ namespace SC.API.GraphQL.Types
                         return playerRepository.GetById((Guid)context.Source.RunnerUpId);
                     return null;
                 }
+            );
+
+            Field<ListGraphType<PlayerType>>(
+                "players",
+                resolve: context => tournamentRepository.GetPlayersOfTournamentById(context.Source.Id)
+            );
+
+            Field<ListGraphType<GroupType>>(
+                "groups",
+                resolve: context => tournamentRepository.GetGroupsOfTournamentById(context.Source.Id)
+            );
+
+            Field<ListGraphType<FrameType>>(
+                "frames",
+                resolve: context => tournamentRepository.GetFramesOfTournamentById(context.Source.Id)
             );
         }
     }

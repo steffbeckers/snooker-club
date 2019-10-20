@@ -64,7 +64,7 @@
 </style>
 
 <script>
-import gql from 'graphql-tag'
+import gql from 'graphql-tag';
 
 export default {
   name: 'Tournament',
@@ -131,6 +131,13 @@ export default {
         }
       },
       result(response) {
+        // Check data
+        if (!response || !response.data || !response.data.tournament) {
+          // TODO: Show snackbar that the tournament is deleted?
+          this.$router.push({ name: 'Leagues' });
+          return;
+        }
+
         // Breadcrumb update
         this.breadcrumbs = [];
         if (response.data.tournament.league.id && response.data.tournament.league.displayName) {
