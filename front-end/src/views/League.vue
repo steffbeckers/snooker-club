@@ -91,9 +91,7 @@
                       <td>{{ tournament.date | formatDateDDMM }}</td>
                       <td>
                         <span v-for="(player, index) in tournament.players" :key="player.id">
-                          {{ player.firstName }} {{ player.lastName }}
-                          <span v-if="index === tournament.players.length - 2"> en </span>
-                          <span v-else-if="index !== tournament.players.length - 1">, </span>
+                          {{ player.firstName }} {{ player.lastName }}<span v-if="index === tournament.players.length - 2"> en </span><span v-else-if="index !== tournament.players.length - 1">, </span>
                         </span>
                       </td>
                       <td>
@@ -117,7 +115,7 @@
           <v-card class="ma-2">
             <v-card-title>
               <span>Spelers</span>
-              <v-spacer></v-spacer>
+              <!-- <v-spacer></v-spacer>
               <v-dialog v-model="showAddPlayerDialog" persistent max-width="500px">
                 <template v-slot:activator="{ on }">
                   <v-btn v-on="on" icon>
@@ -174,7 +172,7 @@
                     <v-btn color="blue darken-1" text @click="showAddPlayerDialog = false">Toevoegen</v-btn>
                   </v-card-actions>
                 </v-card>
-              </v-dialog>
+              </v-dialog> -->
             </v-card-title>
             <v-card-text>
               <v-data-table
@@ -209,6 +207,14 @@
                     </template>
                   </v-edit-dialog>
                 </template>
+                <template v-slot:item.actions="{ item }">
+                  <v-icon
+                    small
+                    @click="deleteLeaguePlayer(item)"
+                  >
+                    delete
+                  </v-icon>
+                </template>
               </v-data-table>
             </v-card-text>
           </v-card>
@@ -235,6 +241,7 @@ export default {
     newTournament: {
       date: moment().format('YYYY-MM-DD')
     },
+    newPlayer: null,
     showAddTournamentDialog: false,
     showAddTournamentDialogDatePicker: false,
     showAddPlayerDialog: false,
@@ -246,6 +253,7 @@ export default {
         value: 'firstName',
       },
       { text: 'Handicap', value: 'handicap' },
+      { text: '', value: 'actions', sortable: false }
     ],
     breadcrumbs: [
       {
@@ -290,6 +298,7 @@ export default {
           }
         }
       `,
+      fetchPolicy: 'no-cache',
       variables() {
         return {
           id: this.$route.params.id
@@ -309,7 +318,7 @@ export default {
         // Breadcrumb update
         this.breadcrumbs[1] = { text: response.data.league.displayName, disabled: true };
       },
-      pollInterval: 5000
+      //pollInterval: 1000
     }
   },
   methods: {
@@ -353,6 +362,31 @@ export default {
         mutation: gql`
           mutation ($leaguePlayer: leaguePlayerInput!) {
             linkPlayerToLeague(leaguePlayer: $leaguePlayer) {
+              id
+            }
+          }
+        `,
+        variables: {
+          leaguePlayer: leaguePlayer
+        }
+      }).finally(() => {
+        // Close dialog
+        this.showAddPlayerDialog = false;
+
+        // Reset
+        this.newPlayer = null;
+      });
+    },
+    deleteLeaguePlayer(player) {
+      const leaguePlayer = {
+        leagueId: this.league.id,
+        playerId: player.id
+      }
+
+      this.$apollo.mutate({
+        mutation: gql`
+          mutation ($leaguePlayer: leaguePlayerInput!) {
+            unlinkPlayerFromLeague(leaguePlayer: $leaguePlayer) {
               id
             }
           }

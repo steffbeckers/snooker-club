@@ -41,9 +41,12 @@ namespace SC.API.DAL.Repositories
                 player.Score = framePlayer.Score;
 
                 // Include handicaps from PlayerTournament
-                player.Handicap = this.context.PlayerTournament
-                    .Single(pt => pt.TournamentId == frame.TournamentId && pt.PlayerId == player.Id)
-                    .Handicap;
+                PlayerTournament playerTournament = this.context.PlayerTournament
+                    .SingleOrDefault(pt => pt.TournamentId == frame.TournamentId && pt.PlayerId == player.Id);
+                if (playerTournament != null)
+                {
+                    player.Handicap = playerTournament.Handicap;
+                }
             }
 
             return players;

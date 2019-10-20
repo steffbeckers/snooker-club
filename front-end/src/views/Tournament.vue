@@ -14,7 +14,50 @@
         </v-flex>
         <v-flex v-if="tournament.players" xs12 sm4 class="tournament__players">
           <v-card class="ma-2">
-            <v-card-title>Spelers</v-card-title>
+            <v-card-title>
+              <span>Spelers</span>
+              <v-spacer></v-spacer>
+              <v-dialog v-model="showAddPlayerDialog" persistent max-width="500px">
+                <template v-slot:activator="{ on }">
+                  <v-btn v-on="on" icon>
+                    <v-icon>mdi-plus-circle</v-icon>
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-card-title>
+                    <span class="headline">Speler toevoegen aan {{ tournament.league.displayName }}</span>
+                  </v-card-title>
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col cols="12">
+                          <v-autocomplete
+                            v-model="newPlayer"
+                            :items="tournament.league.players"
+                            label="Speler"
+                            placeholder="Speler zoeken"
+                            prepend-icon="mdi-database-search"
+                            return-object
+                          >
+                            <template v-slot:selection="data">
+                              {{ data.item.firstName }} {{ data.item.lastName }}
+                            </template>
+                            <template v-slot:item="data">
+                              {{ data.item.firstName }} {{ data.item.lastName }}
+                            </template>
+                          </v-autocomplete>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="darken-1" text @click="showAddPlayerDialog = false; newPlayer = null">Sluiten</v-btn>
+                    <v-btn color="blue darken-1" text @click="upsertPlayerTournament(newPlayer)">Toevoegen</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>  
+            </v-card-title>
             <v-card-text>
               <v-data-table
                 :headers="playersTableHeaders"
@@ -31,7 +74,7 @@
                     :return-value.sync="props.item.handicap"
                     large
                     persistent
-                    @save="updateHandicapOfPlayer(props.item)"
+                    @save="upsertPlayerTournament(props.item)"
                   >
                     <div>{{ props.item.handicap }}</div>
                     <template v-slot:input>
@@ -46,6 +89,14 @@
                       ></v-text-field>
                     </template>
                   </v-edit-dialog>
+                </template>
+                <template v-slot:item.actions="{ item }">
+                  <v-icon
+                    small
+                    @click="deletePlayerTournament(item)"
+                  >
+                    delete
+                  </v-icon>
                 </template>
               </v-data-table>
             </v-card-text>
@@ -70,6 +121,8 @@ export default {
   name: 'Tournament',
   data: () => ({
     tournament: null,
+    newPlayer: null,
+    showAddPlayerDialog: false,
     playersTablePagination: {},
     playersTableHeaders: [
       {
@@ -78,6 +131,7 @@ export default {
         value: 'firstName',
       },
       { text: 'Handicap', value: 'handicap' },
+      { text: '', value: 'actions', sortable: false }
     ],
     breadcrumbs: []
   }),
@@ -90,6 +144,12 @@ export default {
             league {
               id
               displayName
+              players {
+                id
+                firstName
+                lastName
+                handicap
+              }
             }
             date
             displayName
@@ -125,6 +185,7 @@ export default {
           }
         }
       `,
+      fetchPolicy: 'no-cache',
       variables() {
         return {
           id: this.$route.params.id
@@ -151,13 +212,55 @@ export default {
           this.breadcrumbs.push({ text: this.$options.filters.formatDate(response.data.tournament.date), disabled: true });
         }
       },
-      pollInterval: 5000
+      //pollInterval: 1000
     }
   },
   methods: {
-    updateHandicapOfPlayer(player) {
-      // TODO
-      console.log(player);
+    upsertPlayerTournament(player) {
+      const playerTournament = {
+        playerId: player.id,
+        tournamentId: this.tournament.id,
+        handicap: player.handicap
+      }
+
+      this.$apollo.mutate({
+        mutation: gql`
+          mutation ($playerTournament: playerTournamentInput!) {
+            linkPlayerToTournament(playerTournament: $playerTournament) {
+              id
+            }
+          }
+        `,
+        variables: {
+          playerTournament: playerTournament
+        },
+        // update: (store, { data: { linkPlayerToTournament } }) => {
+        //   // TODO: Return Player instead of Tournament data to add the player to the list
+        //   //this.tournament.players.unshift(linkPlayerToTournament);
+        // },
+      }).finally(() => {
+        // Reset
+        this.newPlayer = null;
+      });
+    },
+    deletePlayerTournament(player) {
+      const playerTournament = {
+        playerId: player.id,
+        tournamentId: this.tournament.id
+      }
+
+      this.$apollo.mutate({
+        mutation: gql`
+          mutation ($playerTournament: playerTournamentInput!) {
+            unlinkPlayerFromTournament(playerTournament: $playerTournament) {
+              id
+            }
+          }
+        `,
+        variables: {
+          playerTournament: playerTournament
+        }
+      });
     }
   }
 }
