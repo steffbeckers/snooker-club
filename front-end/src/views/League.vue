@@ -183,6 +183,7 @@
                 dense
                 sortBy="firstName"
                 hide-default-footer
+                :items-per-page="100"
               >
                 <template v-slot:item.firstName="props">
                   {{ props.item.firstName }} {{ props.item.lastName }}
@@ -192,7 +193,7 @@
                     :return-value.sync="props.item.handicap"
                     large
                     persistent
-                    @save="updateHandicapOfPlayer(props.item)"
+                    @save="upsertLeaguePlayer(props.item)"
                   >
                     <div>{{ props.item.handicap }}</div>
                     <template v-slot:input>
@@ -341,9 +342,25 @@ export default {
         }
       });
     },
-    updateHandicapOfPlayer(player) {
-      // TODO
-      console.log(player);
+    upsertLeaguePlayer(player) {
+      const leaguePlayer = {
+        leagueId: this.league.id,
+        playerId: player.id,
+        handicap: player.handicap
+      }
+
+      this.$apollo.mutate({
+        mutation: gql`
+          mutation ($leaguePlayer: leaguePlayerInput!) {
+            linkPlayerToLeague(leaguePlayer: $leaguePlayer) {
+              id
+            }
+          }
+        `,
+        variables: {
+          leaguePlayer: leaguePlayer
+        }
+      });
     }
   }
 }

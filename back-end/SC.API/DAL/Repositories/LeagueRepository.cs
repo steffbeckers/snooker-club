@@ -4,6 +4,7 @@ using SC.API.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SC.API.DAL.Repositories
 {
@@ -17,6 +18,14 @@ namespace SC.API.DAL.Repositories
         }
 
         // Additional functionality and overrides
+
+        public League GetWithPlayersById(Guid id)
+        {
+            return this.context.Leagues
+                .Include(l => l.LeaguePlayer)
+                .ThenInclude(lp => lp.Player)
+                .SingleOrDefault(l => l.Id == id);
+        }
 
         public IEnumerable<Player> GetPlayersOfLeagueById(Guid id)
         {

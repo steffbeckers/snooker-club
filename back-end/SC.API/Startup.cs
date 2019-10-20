@@ -47,10 +47,14 @@ namespace SC.API
 
             // Repositories
             services.AddScoped<BreakRepository>();
+            services.AddScoped<FramePlayerRepository>();
             services.AddScoped<FrameRepository>();
+            services.AddScoped<GroupPlayerRepository>();
             services.AddScoped<GroupRepository>();
+            services.AddScoped<LeaguePlayerRepository>();
             services.AddScoped<LeagueRepository>();
             services.AddScoped<PlayerRepository>();
+            services.AddScoped<PlayerTournamentRepository>();
             services.AddScoped<SettingRepository>();
             services.AddScoped<TournamentRepository>();
             services.AddScoped<UserRepository>();

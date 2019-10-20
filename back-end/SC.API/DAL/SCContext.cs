@@ -45,8 +45,9 @@ namespace SC.API.DAL
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Identity
             base.OnModelCreating(modelBuilder);
+
+            #region Identity
 
             modelBuilder.Entity<User>(e => e.ToTable("Users"));
             modelBuilder.Entity<IdentityRole<Guid>>(e => e.ToTable("Roles"));
@@ -71,108 +72,9 @@ namespace SC.API.DAL
                 e.HasKey(key => new { key.UserId, key.LoginProvider, key.Name });
             });
 
+            #endregion
 
-            // Leagues
-
-            //// Soft delete query filter
-            modelBuilder.Entity<League>().HasQueryFilter(e => e.DeletedOn == null);
-
-            //// Table
-            modelBuilder.Entity<League>().ToTable("Leagues");
-
-            //// Properties
-            modelBuilder.Entity<League>().Property(e => e.Name).IsRequired();
-            modelBuilder.Entity<League>().Property(e => e.DisplayName).IsRequired();
-
-
-            // Tournaments
-
-            //// Soft delete query filter
-            modelBuilder.Entity<Tournament>().HasQueryFilter(e => e.DeletedOn == null);
-
-            //// Table
-            modelBuilder.Entity<Tournament>().ToTable("Tournaments");
-
-            //// Properties
-            modelBuilder.Entity<Tournament>().Property(e => e.Date).IsRequired();
-
-
-            // Groups
-
-            //// Soft delete query filter
-            modelBuilder.Entity<Group>().HasQueryFilter(e => e.DeletedOn == null);
-
-            //// Table
-            modelBuilder.Entity<Group>().ToTable("Groups");
-
-            //// Properties
-            modelBuilder.Entity<Group>().Property(e => e.TournamentId).IsRequired();
-
-
-            // GroupPlayer
-
-            //// Soft delete query filter
-            modelBuilder.Entity<GroupPlayer>().HasQueryFilter(e => e.DeletedOn == null);
-
-            //// Table
-            modelBuilder.Entity<GroupPlayer>().ToTable("GroupPlayer");
-
-            //// Properties
-            modelBuilder.Entity<GroupPlayer>().Property(e => e.GroupId).IsRequired();
-            modelBuilder.Entity<GroupPlayer>().Property(e => e.PlayerId).IsRequired();
-            modelBuilder.Entity<GroupPlayer>().Property(e => e.Position).IsRequired();
-
-
-            // PlayerTournament
-
-            //// Soft delete query filter
-            modelBuilder.Entity<PlayerTournament>().HasQueryFilter(e => e.DeletedOn == null);
-
-            //// Table
-            modelBuilder.Entity<PlayerTournament>().ToTable("PlayerTournament");
-
-            //// Properties
-            modelBuilder.Entity<PlayerTournament>().Property(e => e.PlayerId).IsRequired();
-            modelBuilder.Entity<PlayerTournament>().Property(e => e.TournamentId).IsRequired();
-
-
-            // Players
-
-            //// Soft delete query filter
-            modelBuilder.Entity<Player>().HasQueryFilter(e => e.DeletedOn == null);
-
-            //// Table
-            modelBuilder.Entity<Player>().ToTable("Players");
-
-            //// Properties
-            modelBuilder.Entity<Player>().Property(e => e.FirstName).IsRequired();
-            modelBuilder.Entity<Player>().Property(e => e.LastName).IsRequired();
-
-
-            // FramePlayer
-
-            //// Soft delete query filter
-            modelBuilder.Entity<FramePlayer>().HasQueryFilter(e => e.DeletedOn == null);
-
-            //// Table
-            modelBuilder.Entity<FramePlayer>().ToTable("FramePlayer");
-
-            //// Properties
-            modelBuilder.Entity<FramePlayer>().Property(e => e.FrameId).IsRequired();
-            modelBuilder.Entity<FramePlayer>().Property(e => e.PlayerId).IsRequired();
-            modelBuilder.Entity<FramePlayer>().Property(e => e.Position).IsRequired();
-
-
-            // Frames
-
-            //// Soft delete query filter
-            modelBuilder.Entity<Frame>().HasQueryFilter(e => e.DeletedOn == null);
-
-            //// Table
-            modelBuilder.Entity<Frame>().ToTable("Frames");
-
-
-            // Breaks
+            #region Breaks
 
             //// Soft delete query filter
             modelBuilder.Entity<Break>().HasQueryFilter(e => e.DeletedOn == null);
@@ -185,8 +87,118 @@ namespace SC.API.DAL
             modelBuilder.Entity<Break>().Property(e => e.PlayerId).IsRequired();
             modelBuilder.Entity<Break>().Property(e => e.Score).IsRequired();
 
+            #endregion
 
-            // Settings
+            #region FramePlayer
+
+            //// Soft delete query filter
+            modelBuilder.Entity<FramePlayer>().HasQueryFilter(e => e.DeletedOn == null);
+
+            //// Table
+            modelBuilder.Entity<FramePlayer>().ToTable("FramePlayer");
+
+            //// Properties
+            modelBuilder.Entity<FramePlayer>().Property(e => e.FrameId).IsRequired();
+            modelBuilder.Entity<FramePlayer>().Property(e => e.PlayerId).IsRequired();
+            modelBuilder.Entity<FramePlayer>().Property(e => e.Position).IsRequired();
+
+            #endregion
+
+            #region Frames
+
+            //// Soft delete query filter
+            modelBuilder.Entity<Frame>().HasQueryFilter(e => e.DeletedOn == null);
+
+            //// Table
+            modelBuilder.Entity<Frame>().ToTable("Frames");
+
+            #endregion
+
+            #region GroupPlayer
+
+            //// Soft delete query filter
+            modelBuilder.Entity<GroupPlayer>().HasQueryFilter(e => e.DeletedOn == null);
+
+            //// Table
+            modelBuilder.Entity<GroupPlayer>().ToTable("GroupPlayer");
+
+            //// Properties
+            modelBuilder.Entity<GroupPlayer>().Property(e => e.GroupId).IsRequired();
+            modelBuilder.Entity<GroupPlayer>().Property(e => e.PlayerId).IsRequired();
+            modelBuilder.Entity<GroupPlayer>().Property(e => e.Position).IsRequired();
+
+            #endregion
+
+            #region Groups
+
+            //// Soft delete query filter
+            modelBuilder.Entity<Group>().HasQueryFilter(e => e.DeletedOn == null);
+
+            //// Table
+            modelBuilder.Entity<Group>().ToTable("Groups");
+
+            //// Properties
+            modelBuilder.Entity<Group>().Property(e => e.TournamentId).IsRequired();
+
+            #endregion
+
+            #region LeaguePlayer
+
+            //// Soft delete query filter
+            modelBuilder.Entity<LeaguePlayer>().HasQueryFilter(e => e.DeletedOn == null);
+
+            //// Table
+            modelBuilder.Entity<LeaguePlayer>().ToTable("LeaguePlayer");
+
+            //// Properties
+            modelBuilder.Entity<LeaguePlayer>().Property(e => e.LeagueId).IsRequired();
+            modelBuilder.Entity<LeaguePlayer>().Property(e => e.PlayerId).IsRequired();
+
+            #endregion
+
+            #region Leagues
+
+            //// Soft delete query filter
+            modelBuilder.Entity<League>().HasQueryFilter(e => e.DeletedOn == null);
+
+            //// Table
+            modelBuilder.Entity<League>().ToTable("Leagues");
+
+            //// Properties
+            modelBuilder.Entity<League>().Property(e => e.Name).IsRequired();
+            modelBuilder.Entity<League>().Property(e => e.DisplayName).IsRequired();
+
+            #endregion
+
+            #region Players
+
+            //// Soft delete query filter
+            modelBuilder.Entity<Player>().HasQueryFilter(e => e.DeletedOn == null);
+
+            //// Table
+            modelBuilder.Entity<Player>().ToTable("Players");
+
+            //// Properties
+            modelBuilder.Entity<Player>().Property(e => e.FirstName).IsRequired();
+            modelBuilder.Entity<Player>().Property(e => e.LastName).IsRequired();
+
+            #endregion
+
+            #region PlayerTournament
+
+            //// Soft delete query filter
+            modelBuilder.Entity<PlayerTournament>().HasQueryFilter(e => e.DeletedOn == null);
+
+            //// Table
+            modelBuilder.Entity<PlayerTournament>().ToTable("PlayerTournament");
+
+            //// Properties
+            modelBuilder.Entity<PlayerTournament>().Property(e => e.PlayerId).IsRequired();
+            modelBuilder.Entity<PlayerTournament>().Property(e => e.TournamentId).IsRequired();
+
+            #endregion
+
+            #region Settings
 
             //// Soft delete query filter
             modelBuilder.Entity<Setting>().HasQueryFilter(e => e.DeletedOn == null);
@@ -197,6 +209,21 @@ namespace SC.API.DAL
             //// Properties
             modelBuilder.Entity<Setting>().Property(e => e.Key).IsRequired();
             modelBuilder.Entity<Setting>().Property(e => e.Value);
+
+            #endregion
+
+            #region Tournaments
+
+            //// Soft delete query filter
+            modelBuilder.Entity<Tournament>().HasQueryFilter(e => e.DeletedOn == null);
+
+            //// Table
+            modelBuilder.Entity<Tournament>().ToTable("Tournaments");
+
+            //// Properties
+            modelBuilder.Entity<Tournament>().Property(e => e.Date).IsRequired();
+
+            #endregion
         }
 
         public override int SaveChanges()
