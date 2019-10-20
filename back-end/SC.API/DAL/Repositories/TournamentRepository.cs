@@ -18,6 +18,14 @@ namespace SC.API.DAL.Repositories
 
         // Additional functionality and overrides
 
+        public Tournament GetWithPlayersById(Guid id)
+        {
+            return this.context.Tournaments
+                .Include(t => t.PlayerTournament)
+                .ThenInclude(pt => pt.Player)
+                .SingleOrDefault(t => t.Id == id);
+        }
+
         public IEnumerable<Tournament> GetByLeagueId(Guid leagueId)
         {
             return this.context.Tournaments.Where(t => t.LeagueId == leagueId)

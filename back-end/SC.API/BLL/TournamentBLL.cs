@@ -8,10 +8,12 @@ namespace SC.API.BLL
     public class TournamentBLL
     {
         private readonly TournamentRepository tournamentRepository;
+        private readonly PlayerTournamentRepository playerTournamentRepository;
 
-        public TournamentBLL(TournamentRepository tournamentRepository)
+        public TournamentBLL(TournamentRepository tournamentRepository, PlayerTournamentRepository playerTournamentRepository)
         {
             this.tournamentRepository = tournamentRepository;
+            this.playerTournamentRepository = playerTournamentRepository;
         }
 
         public async Task<Tournament> CreateTournamentAsync(Tournament tournament)
@@ -66,12 +68,33 @@ namespace SC.API.BLL
 
         public async Task<Tournament> LinkPlayerToTournamentAsync(PlayerTournament playerTournament)
         {
-            throw new NotImplementedException();
+            PlayerTournament playerTournamentLink = this.playerTournamentRepository.GetByPlayerAndTournamentId(playerTournament.PlayerId, playerTournament.TournamentId);
+
+            if (playerTournamentLink == null)
+            {
+                await this.playerTournamentRepository.InsertAsync(playerTournament);
+            }
+            else
+            {
+                // Mapping
+                playerTournamentLink.Handicap = playerTournament.Handicap;
+
+                await this.playerTournamentRepository.UpdateAsync(playerTournamentLink);
+            }
+
+            return this.tournamentRepository.GetWithPlayersById(playerTournament.TournamentId);
         }
 
         public async Task<Tournament> UnlinkPlayerFromTournamentAsync(PlayerTournament playerTournament)
         {
-            throw new NotImplementedException();
+            PlayerTournament playerTournamentLink = this.playerTournamentRepository.GetByPlayerAndTournamentId(playerTournament.PlayerId, playerTournament.TournamentId);
+
+            if (playerTournamentLink != null)
+            {
+                await this.playerTournamentRepository.DeleteAsync(playerTournamentLink);
+            }
+
+            return this.tournamentRepository.GetWithPlayersById(playerTournament.TournamentId);
         }
 
         public async Task<bool> RemoveTournamentAsync(Guid id)
