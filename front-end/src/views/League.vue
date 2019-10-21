@@ -115,7 +115,7 @@
           <v-card class="ma-2">
             <v-card-title>
               <span>Spelers</span>
-              <!-- <v-spacer></v-spacer>
+              <v-spacer></v-spacer>
               <v-dialog v-model="showAddPlayerDialog" persistent max-width="500px">
                 <template v-slot:activator="{ on }">
                   <v-btn v-on="on" icon>
@@ -129,50 +129,45 @@
                   <v-card-text>
                     <v-container>
                       <v-row>
-                        <v-col cols="12" sm="6" md="4">
-                          <v-text-field label="Legal first name*" required></v-text-field>
-                        </v-col>
-                        <v-col cols="12" sm="6" md="4">
-                          <v-text-field label="Legal middle name" hint="example of helper text only on focus"></v-text-field>
-                        </v-col>
-                        <v-col cols="12" sm="6" md="4">
-                          <v-text-field
-                            label="Legal last name*"
-                            hint="example of persistent helper text"
-                            persistent-hint
-                            required
-                          ></v-text-field>
-                        </v-col>
                         <v-col cols="12">
-                          <v-text-field label="Email*" required></v-text-field>
-                        </v-col>
-                        <v-col cols="12">
-                          <v-text-field label="Password*" type="password" required></v-text-field>
-                        </v-col>
-                        <v-col cols="12" sm="6">
-                          <v-select
-                            :items="['0-17', '18-29', '30-54', '54+']"
-                            label="Age*"
-                            required
-                          ></v-select>
-                        </v-col>
-                        <v-col cols="12" sm="6">
                           <v-autocomplete
-                            :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
-                            label="Interests"
-                            multiple
-                          ></v-autocomplete>
+                            v-model="newPlayer"
+                            :items="playersThatCanBeAddedToLeague"
+                            label="Speler"
+                            placeholder="Speler zoeken"
+                            prepend-icon="mdi-database-search"
+                            :filter="playerFilter"
+                            required
+                            clearable
+                            return-object
+                          >
+                            <template v-slot:selection="data">
+                              {{ data.item.firstName }} {{ data.item.lastName }}
+                            </template>
+                            <template v-slot:item="data">
+                              {{ data.item.firstName }} {{ data.item.lastName }}
+                            </template>
+                          </v-autocomplete>
+                        </v-col>
+                      </v-row>
+                      <v-row v-if="newPlayer">
+                        <v-col cols="12">
+                          <v-text-field
+                            v-model.number="newPlayer.handicap"
+                            label="Handicap"
+                            prepend-icon="format_list_numbered"
+                          ></v-text-field>
                         </v-col>
                       </v-row>
                     </v-container>
                   </v-card-text>
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="darken-1" text @click="showAddPlayerDialog = false">Sluiten</v-btn>
-                    <v-btn color="blue darken-1" text @click="showAddPlayerDialog = false">Toevoegen</v-btn>
+                    <v-btn color="darken-1" text @click="showAddPlayerDialog = false; newPlayer = null">Sluiten</v-btn>
+                    <v-btn color="blue darken-1" text @click="upsertLeaguePlayer(newPlayer)">Toevoegen</v-btn>
                   </v-card-actions>
                 </v-card>
-              </v-dialog> -->
+              </v-dialog>
             </v-card-title>
             <v-card-text>
               <v-data-table
@@ -241,6 +236,7 @@ export default {
     newTournament: {
       date: moment().format('YYYY-MM-DD')
     },
+    players: [],
     newPlayer: null,
     showAddTournamentDialog: false,
     showAddTournamentDialogDatePicker: false,
@@ -294,6 +290,11 @@ export default {
                 firstName
                 lastName
               }
+              runnerUp {
+                id
+                firstName
+                lastName
+              }
             }
           }
         }
@@ -319,6 +320,23 @@ export default {
         this.breadcrumbs[1] = { text: response.data.league.displayName, disabled: true };
       },
       //pollInterval: 1000
+    },
+    players: {
+      query: gql`
+        query {
+          players {
+            id
+            firstName
+            lastName
+          }
+        }
+      `
+    }
+  },
+  computed: {
+    playersThatCanBeAddedToLeague() {
+      let idsOfPlayersAddedToLeague = this.league.players.map(p => p.id)
+      return this.players.filter(p => !idsOfPlayersAddedToLeague.includes(p.id))
     }
   },
   methods: {
@@ -348,10 +366,20 @@ export default {
         this.newTournament = {
           date: moment().format('YYYY-MM-DD'),
           leagueId: this.league.id
-        }
+        };
       });
     },
+    playerFilter (item, queryText) {
+      const firstName = item.firstName.toLowerCase();
+      const lastName = item.lastName.toLowerCase();
+      const searchText = queryText.toLowerCase();
+
+      return firstName.indexOf(searchText) > -1 ||
+        lastName.indexOf(searchText) > -1;
+    },
     upsertLeaguePlayer(player) {
+      if (!player || !this.league) { return; }
+
       const leaguePlayer = {
         leagueId: this.league.id,
         playerId: player.id,
@@ -362,22 +390,29 @@ export default {
         mutation: gql`
           mutation ($leaguePlayer: leaguePlayerInput!) {
             linkPlayerToLeague(leaguePlayer: $leaguePlayer) {
-              id
+              players {
+                id
+                firstName
+                lastName
+                handicap
+              }
             }
           }
         `,
         variables: {
           leaguePlayer: leaguePlayer
+        },
+        update: (store, { data: { linkPlayerToLeague } }) => {
+          this.league.players = linkPlayerToLeague.players;
         }
       }).finally(() => {
-        // Close dialog
-        this.showAddPlayerDialog = false;
-
         // Reset
         this.newPlayer = null;
       });
     },
     deleteLeaguePlayer(player) {
+      if (!player || !this.league) { return; }
+
       const leaguePlayer = {
         leagueId: this.league.id,
         playerId: player.id
@@ -387,12 +422,20 @@ export default {
         mutation: gql`
           mutation ($leaguePlayer: leaguePlayerInput!) {
             unlinkPlayerFromLeague(leaguePlayer: $leaguePlayer) {
-              id
+              players {
+                id
+                firstName
+                lastName
+                handicap
+              }
             }
           }
         `,
         variables: {
           leaguePlayer: leaguePlayer
+        },
+        update: (store, { data: { unlinkPlayerFromLeague } }) => {
+          this.league.players = unlinkPlayerFromLeague.players;
         }
       });
     }

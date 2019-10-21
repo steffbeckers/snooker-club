@@ -39,6 +39,7 @@ namespace SC.API.DAL.Repositories
                 .Include(lp => lp.Player)
                 .Where(lp => lp.TournamentId == id)
                 .Select(lp => lp.Player)
+                .OrderBy(p => p.FirstName)
                 .ToList();
 
             // Include handicaps from PlayerTournament

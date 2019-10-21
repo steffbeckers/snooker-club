@@ -49,6 +49,8 @@ namespace SC.API.DAL.Repositories
                 }
             }
 
+            players = players.OrderBy(p => p.Position).ToList();
+
             return players;
         }
 

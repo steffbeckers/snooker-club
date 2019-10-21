@@ -2,6 +2,7 @@
 using SC.API.DAL.Repositories;
 using SC.API.GraphQL.Types;
 using System;
+using System.Linq;
 
 namespace SC.API.GraphQL
 {
@@ -18,7 +19,7 @@ namespace SC.API.GraphQL
             // Leagues
             Field<ListGraphType<LeagueType>>(
                 "leagues",
-                resolve: context => leagueRepository.Get()
+                resolve: context => leagueRepository.Get(null, p => p.OrderBy(p => p.DisplayName))
             );
             Field<LeagueType>(
                 "league",
@@ -29,7 +30,7 @@ namespace SC.API.GraphQL
             // Players
             Field<ListGraphType<PlayerType>>(
                 "players",
-                resolve: context => playerRepository.Get()
+                resolve: context => playerRepository.Get(null, p => p.OrderBy(p => p.FirstName))
             );
             Field<PlayerType>(
                 "player",
@@ -40,9 +41,9 @@ namespace SC.API.GraphQL
             // Tournaments
             Field<ListGraphType<TournamentType>>(
                 "tournaments",
-                resolve: context => tournamentRepository.Get()
+                resolve: context => tournamentRepository.Get(null, t => t.OrderByDescending(t => t.Date))
             );
-            Field<TournamentType>(
+            Field<TournamentType>( 
                 "tournament",
                 arguments: new QueryArguments(new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id" }),
                 resolve: context => tournamentRepository.GetById(context.GetArgument<Guid>("id"))
@@ -76,7 +77,7 @@ namespace SC.API.GraphQL
             // Settings
             Field<ListGraphType<SettingType>>(
                 "settings",
-                resolve: context => settingRepository.Get()
+                resolve: context => settingRepository.Get(null, s => s.OrderByDescending(s => s.Key))
             );
             Field<SettingType>(
                 "setting",

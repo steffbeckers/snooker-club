@@ -45,6 +45,8 @@ namespace SC.API.DAL.Repositories
                     .Handicap;
             }
 
+            players = players.OrderBy(p => p.Position).ToList();
+
             return players;
         }
 

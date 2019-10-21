@@ -11,6 +11,37 @@
     <v-container class="pa-2" fluid>
       <v-layout wrap>
         <v-flex xs12 sm8>
+          <v-card class="ma-2">
+            <v-card-title>
+              Poule 1
+            </v-card-title>
+            <v-card-text>
+              <v-simple-table class="tournament">
+                <template v-slot:default>
+                  <thead>
+                    <tr>
+                      <th class="text-left">Speler</th>
+                      <th></th>
+                      <th v-for="n in tournament.players.length" :key="n">{{ n }}</th>
+                      <th>Totaal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(player, index) in tournament.players" :key="player.id">
+                      <td>{{ player.firstName }} {{ player.lastName }}</td>
+                      <td>{{ index + 1 }}</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-card-text>
+          </v-card>
         </v-flex>
         <v-flex v-if="tournament.players" xs12 sm4 class="tournament__players">
           <v-card class="ma-2">
@@ -33,10 +64,13 @@
                         <v-col cols="12">
                           <v-autocomplete
                             v-model="newPlayer"
-                            :items="tournament.league.players"
+                            :items="playersThatCanBeAddedToTournament"
                             label="Speler"
                             placeholder="Speler zoeken"
                             prepend-icon="mdi-database-search"
+                            :filter="playerFilter"
+                            required
+                            clearable
                             return-object
                           >
                             <template v-slot:selection="data">
@@ -112,6 +146,7 @@
   .tournament__display-name {
     margin-right: 20px;
   }
+  
 </style>
 
 <script>
@@ -215,8 +250,24 @@ export default {
       //pollInterval: 1000
     }
   },
+  computed: {
+    playersThatCanBeAddedToTournament() {
+      let idsOfPlayersAddedToTournament = this.tournament.players.map(p => p.id)
+      return this.tournament.league.players.filter(p => !idsOfPlayersAddedToTournament.includes(p.id))
+    }
+  },
   methods: {
+    playerFilter (item, queryText) {
+      const firstName = item.firstName.toLowerCase();
+      const lastName = item.lastName.toLowerCase();
+      const searchText = queryText.toLowerCase();
+
+      return firstName.indexOf(searchText) > -1 ||
+        lastName.indexOf(searchText) > -1;
+    },
     upsertPlayerTournament(player) {
+      if (!player || !this.tournament) { return; }
+
       const playerTournament = {
         playerId: player.id,
         tournamentId: this.tournament.id,
@@ -227,23 +278,29 @@ export default {
         mutation: gql`
           mutation ($playerTournament: playerTournamentInput!) {
             linkPlayerToTournament(playerTournament: $playerTournament) {
-              id
+              players {
+                id
+                firstName
+                lastName
+                handicap
+              }
             }
           }
         `,
         variables: {
           playerTournament: playerTournament
         },
-        // update: (store, { data: { linkPlayerToTournament } }) => {
-        //   // TODO: Return Player instead of Tournament data to add the player to the list
-        //   //this.tournament.players.unshift(linkPlayerToTournament);
-        // },
+        update: (store, { data: { linkPlayerToTournament } }) => {
+          this.tournament.players = linkPlayerToTournament.players;
+        },
       }).finally(() => {
         // Reset
         this.newPlayer = null;
       });
     },
     deletePlayerTournament(player) {
+      if (!player || !this.tournament) { return; }
+      
       const playerTournament = {
         playerId: player.id,
         tournamentId: this.tournament.id
@@ -253,13 +310,21 @@ export default {
         mutation: gql`
           mutation ($playerTournament: playerTournamentInput!) {
             unlinkPlayerFromTournament(playerTournament: $playerTournament) {
-              id
+              players {
+                id
+                firstName
+                lastName
+                handicap
+              }
             }
           }
         `,
         variables: {
           playerTournament: playerTournament
-        }
+        },
+        update: (store, { data: { unlinkPlayerFromTournament } }) => {
+          this.tournament.players = unlinkPlayerFromTournament.players;
+        },
       });
     }
   }

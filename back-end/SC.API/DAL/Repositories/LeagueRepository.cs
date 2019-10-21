@@ -33,6 +33,7 @@ namespace SC.API.DAL.Repositories
                 .Include(lp => lp.Player)
                 .Where(lp => lp.LeagueId == id)
                 .Select(lp => lp.Player)
+                .OrderBy(p => p.FirstName)
                 .ToList();
 
             // Include handicaps from LeaguePlayer
