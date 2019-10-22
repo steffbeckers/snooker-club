@@ -7,9 +7,9 @@ namespace SC.API.GraphQL.Types
         public PlayerPositionTournamentInputType()
         {
             Name = "playerPositionTournamentInput";
-            Field<NonNullGraphType<IdGraphType>>("id");
+            Field<IdGraphType>("id");
             Field<NonNullGraphType<IntGraphType>>("position");
-            Field<NonNullGraphType<IdGraphType>>("playerId");
+            Field<IdGraphType>("playerId"); // Nullable for unlink
             Field<NonNullGraphType<IdGraphType>>("tournamentId");
         }
     }

@@ -1,4 +1,5 @@
-﻿using SC.API.DAL.Repositories;
+﻿using GraphQL;
+using SC.API.DAL.Repositories;
 using SC.API.Models;
 using System;
 using System.Threading.Tasks;
@@ -105,21 +106,36 @@ namespace SC.API.BLL
 
         public async Task<Tournament> LinkPlayerPositionToTournamentAsync(PlayerPositionTournament playerPositionTournament)
         {
+            // Validation
+            if (playerPositionTournament.PlayerId == Guid.Empty)
+            {
+                throw new ExecutionError("TournamentBLL.LinkPlayerPositionToTournamentAsync(PlayerPositionTournament playerPositionTournament) => playerPositionTournament.PlayerId must be provided.");
+            }
+
+            // First remove existing link for position
+            PlayerPositionTournament playerPositionTournamentLink = this.playerPositionTournamentRepository.GetByPositionAndTournamentId(playerPositionTournament.Position, playerPositionTournament.TournamentId);
+            
+            if (playerPositionTournamentLink != null)
+            {
+                await this.playerPositionTournamentRepository.DeleteAsync(playerPositionTournamentLink);
+            }
+
+            // Add new link for position
             await this.playerPositionTournamentRepository.InsertAsync(playerPositionTournament);
 
             return this.tournamentRepository.GetWithPlayerPositionsById(playerPositionTournament.TournamentId);
         }
 
-        public async Task<Tournament> UnlinkPlayerPositionFromTournamentAsync(PlayerTournament playerTournament)
+        public async Task<Tournament> UnlinkPlayerPositionFromTournamentAsync(PlayerPositionTournament playerPositionTournament)
         {
-            PlayerPositionTournament playerPositionTournamentLink = this.playerPositionTournamentRepository.GetById(playerTournament.Id);
+            PlayerPositionTournament playerPositionTournamentLink = this.playerPositionTournamentRepository.GetByPositionAndTournamentId(playerPositionTournament.Position, playerPositionTournament.TournamentId);
 
             if (playerPositionTournamentLink != null)
             {
                 await this.playerPositionTournamentRepository.DeleteAsync(playerPositionTournamentLink);
             }
 
-            return this.tournamentRepository.GetWithPlayerPositionsById(playerTournament.TournamentId);
+            return this.tournamentRepository.GetWithPlayerPositionsById(playerPositionTournament.TournamentId);
         }
 
         public async Task<bool> RemoveTournamentAsync(Guid id)

@@ -16,11 +16,76 @@
               Poule 1
             </v-card-title>
             <v-card-text>
+              <v-autocomplete
+                :items="tournament.players"
+                label="Speler"
+                placeholder="Selecteer speler"
+                :filter="playerFilter"
+                item-value="id"
+                hide-selected
+                required
+                clearable
+                return-object
+                :value="playerOnPosition(1)"
+                @change="upsertPlayerPositionTournament($event, 1)"
+                @click:clear="deletePlayerPositionTournament(1)"
+              >
+                <template v-slot:selection="data">
+                  {{ data.item.firstName }} {{ data.item.lastName }}
+                </template>
+                <template v-slot:item="data">
+                  {{ data.item.firstName }} {{ data.item.lastName }}
+                </template>
+              </v-autocomplete>
+              <v-autocomplete
+                :items="tournament.players"
+                label="Speler"
+                placeholder="Selecteer speler"
+                :filter="playerFilter"
+                item-value="id"
+                hide-selected
+                required
+                clearable
+                return-object
+                :value="playerOnPosition(2)"
+                @change="upsertPlayerPositionTournament($event, 2)"
+                @click:clear="deletePlayerPositionTournament(2)"
+              >
+                <template v-slot:selection="data">
+                  {{ data.item.firstName }} {{ data.item.lastName }}
+                </template>
+                <template v-slot:item="data">
+                  {{ data.item.firstName }} {{ data.item.lastName }}
+                </template>
+              </v-autocomplete>
+              <v-autocomplete
+                :items="tournament.players"
+                label="Speler"
+                placeholder="Selecteer speler"
+                :filter="playerFilter"
+                item-value="id"
+                hide-selected
+                required
+                clearable
+                return-object
+                :value="playerOnPosition(3)"
+                @change="upsertPlayerPositionTournament($event, 3)"
+                @click:clear="deletePlayerPositionTournament(3)"
+              >
+                <template v-slot:selection="data">
+                  {{ data.item.firstName }} {{ data.item.lastName }}
+                </template>
+                <template v-slot:item="data">
+                  {{ data.item.firstName }} {{ data.item.lastName }}
+                </template>
+              </v-autocomplete>
+            </v-card-text>
+            <!-- <v-card-text>
               <v-simple-table class="tournament">
                 <template v-slot:default>
                   <thead>
                     <tr>
-                      <th class="text-left">Speler</th>
+                      <th class="text-left">Spelers</th>
                       <th></th>
                       <th v-for="n in tournament.players.length" :key="n">{{ n }}</th>
                       <th>Totaal</th>
@@ -40,7 +105,7 @@
                   </tbody>
                 </template>
               </v-simple-table>
-            </v-card-text>
+            </v-card-text> -->
           </v-card>
         </v-flex>
         <v-flex v-if="tournament.players" xs12 sm4 class="tournament__players">
@@ -69,6 +134,8 @@
                             placeholder="Speler zoeken"
                             prepend-icon="mdi-database-search"
                             :filter="playerFilter"
+                            item-value="id"
+                            hide-selected
                             required
                             clearable
                             return-object
@@ -194,6 +261,11 @@ export default {
               lastName
               handicap
             }
+            playerPositions {
+              id
+              position
+              playerId
+            }
             frames {
               id
               players {
@@ -257,13 +329,23 @@ export default {
     }
   },
   methods: {
-    playerFilter (item, queryText) {
+    playerFilter(item, queryText) {
       const firstName = item.firstName.toLowerCase();
       const lastName = item.lastName.toLowerCase();
       const searchText = queryText.toLowerCase();
 
       return firstName.indexOf(searchText) > -1 ||
         lastName.indexOf(searchText) > -1;
+    },
+    playerOnPosition(position) {
+      if (!this.tournament || !this.tournament.playerPositions) {
+        return null;
+      }
+
+      const playerPosition = this.tournament.playerPositions.find(pp => pp.position === position);
+      if (!playerPosition) { return null; }
+
+      return this.tournament.players.find(p => p.id === playerPosition.playerId);
     },
     upsertPlayerTournament(player) {
       if (!player || !this.tournament) { return; }
@@ -326,7 +408,64 @@ export default {
           this.tournament.players = unlinkPlayerFromTournament.players;
         },
       });
-    }
+    },
+    upsertPlayerPositionTournament(player, position) {
+      if (!player || !position || !this.tournament) { return; }
+
+      const playerPositionTournament = {
+        playerId: player.id,
+        tournamentId: this.tournament.id,
+        position: position
+      }
+
+      this.$apollo.mutate({
+        mutation: gql`
+          mutation ($playerPositionTournament: playerPositionTournamentInput!) {
+            linkPlayerPositionToTournament(playerPositionTournament: $playerPositionTournament) {
+              playerPositions {
+                id
+                position
+                playerId
+              }
+            }
+          }
+        `,
+        variables: {
+          playerPositionTournament: playerPositionTournament
+        },
+        update: (store, { data: { linkPlayerPositionToTournament } }) => {
+          this.tournament.playerPositions = linkPlayerPositionToTournament.playerPositions;
+        },
+      });
+    },
+    deletePlayerPositionTournament(position) {
+      if (!position || !this.tournament) { return; }
+      
+      const playerPositionTournament = {
+        tournamentId: this.tournament.id,
+        position: position
+      }
+
+      this.$apollo.mutate({
+        mutation: gql`
+          mutation ($playerPositionTournament: playerPositionTournamentInput!) {
+            unlinkPlayerPositionFromTournament(playerPositionTournament: $playerPositionTournament) {
+              playerPositions {
+                id
+                position
+                playerId
+              }
+            }
+          }
+        `,
+        variables: {
+          playerPositionTournament: playerPositionTournament
+        },
+        update: (store, { data: { unlinkPlayerPositionFromTournament } }) => {
+          this.tournament.playerPositions = unlinkPlayerPositionFromTournament.playerPositions;
+        },
+      });
+    },
   }
 }
 </script>

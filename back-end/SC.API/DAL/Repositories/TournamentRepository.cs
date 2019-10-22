@@ -30,7 +30,6 @@ namespace SC.API.DAL.Repositories
         {
             return this.context.Tournaments
                 .Include(t => t.PlayerPositionTournament)
-                .ThenInclude(ppt => ppt.Player)
                 .SingleOrDefault(t => t.Id == id);
         }
 

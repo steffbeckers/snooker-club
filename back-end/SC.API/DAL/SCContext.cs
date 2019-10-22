@@ -271,6 +271,7 @@ namespace SC.API.DAL
                     entry.Entity.GetType() == typeof(League) ||
                     entry.Entity.GetType() == typeof(LeaguePlayer) ||
                     entry.Entity.GetType() == typeof(Player) ||
+                    entry.Entity.GetType() == typeof(PlayerPositionTournament) ||
                     entry.Entity.GetType() == typeof(PlayerTournament) ||
                     entry.Entity.GetType() == typeof(Setting) ||
                     entry.Entity.GetType() == typeof(Tournament))

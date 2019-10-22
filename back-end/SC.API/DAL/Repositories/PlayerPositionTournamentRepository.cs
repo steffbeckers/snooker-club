@@ -18,5 +18,12 @@ namespace SC.API.DAL.Repositories
         }
 
         // Additional functionality and overrides
+
+        public PlayerPositionTournament GetByPositionAndTournamentId(int position, Guid tournamentId)
+        {
+            return this.context.PlayerPositionTournament
+                .Where(ppt => ppt.Position == position && ppt.TournamentId == tournamentId)
+                .SingleOrDefault();
+        }
     }
 }

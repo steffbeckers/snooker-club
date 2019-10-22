@@ -319,6 +319,42 @@ namespace SC.API.GraphQL
                 }
             );
 
+            FieldAsync<TournamentType>(
+                "linkPlayerPositionToTournament",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<PlayerPositionTournamentInputType>>
+                    {
+                        Name = "playerPositionTournament"
+                    }
+                ),
+                resolve: async context =>
+                {
+                    PlayerPositionTournament playerPositionTournament = context.GetArgument<PlayerPositionTournament>("playerPositionTournament");
+
+                    return await context.TryAsyncResolve(
+                        async c => await tournamentBLL.LinkPlayerPositionToTournamentAsync(playerPositionTournament)
+                    );
+                }
+            );
+
+            FieldAsync<TournamentType>(
+                "unlinkPlayerPositionFromTournament",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<PlayerPositionTournamentInputType>>
+                    {
+                        Name = "playerPositionTournament"
+                    }
+                ),
+                resolve: async context =>
+                {
+                    PlayerPositionTournament playerPositionTournament = context.GetArgument<PlayerPositionTournament>("playerPositionTournament");
+
+                    return await context.TryAsyncResolve(
+                        async c => await tournamentBLL.UnlinkPlayerPositionFromTournamentAsync(playerPositionTournament)
+                    );
+                }
+            );
+
             FieldAsync<BooleanGraphType>(
                 "removeTournament",
                 arguments: new QueryArguments(

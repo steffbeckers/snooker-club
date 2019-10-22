@@ -137,6 +137,8 @@
                             placeholder="Speler zoeken"
                             prepend-icon="mdi-database-search"
                             :filter="playerFilter"
+                            item-value="id"
+                            hide-selected
                             required
                             clearable
                             return-object
@@ -369,7 +371,7 @@ export default {
         };
       });
     },
-    playerFilter (item, queryText) {
+    playerFilter(item, queryText) {
       const firstName = item.firstName.toLowerCase();
       const lastName = item.lastName.toLowerCase();
       const searchText = queryText.toLowerCase();
