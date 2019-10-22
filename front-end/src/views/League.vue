@@ -193,8 +193,6 @@
                     <div>{{ props.item.handicap }}</div>
                     <template v-slot:input>
                       <div class="mt-4 title">Bewerk handicap</div>
-                    </template>
-                    <template v-slot:input>
                       <v-text-field
                         v-model.number="props.item.handicap"
                         label="Bewerken"

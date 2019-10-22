@@ -56,9 +56,29 @@
                       </td>
                       <td>{{ index + 1 }}</td>
                       <td v-for="n in tournament.players.length" :key="n">
-                        <v-btn elevation="0" color="white" style="height: 80%;" small>
-                          <span class="title"></span>
-                        </v-btn>
+                        <v-dialog v-model="showScoreDialog" persistent max-width="600px">
+                          <template v-slot:activator="{ on }">
+                            <v-btn elevation="0" color="white" style="height: 80%;" small v-on="on" :disabled="index+1 === n">
+                              <span class="title"></span>
+                            </v-btn>
+                          </template>
+                          <v-card>
+                            <v-card-text>
+                              <v-container>
+                                <v-row>
+                                  <v-col cols="12">
+                                    <span v-if="playerOnPosition(index+1)">Speler 1: {{ playerOnPosition(index+1).firstName }} {{ playerOnPosition(index+1).lastName }}</span><br />
+                                    <span v-if="playerOnPosition(n)">Speler 2: {{ playerOnPosition(n).firstName }} {{ playerOnPosition(n).lastName }}</span>
+                                  </v-col>
+                                </v-row>
+                              </v-container>
+                            </v-card-text>
+                            <v-card-actions>
+                              <v-spacer></v-spacer>
+                              <v-btn color="blue darken-1" text @click="showScoreDialog = false">Sluiten</v-btn>
+                            </v-card-actions>
+                          </v-card>
+                        </v-dialog>
                       </td>
                       <td></td>
                     </tr>
@@ -140,8 +160,6 @@
                     <div>{{ props.item.handicap }}</div>
                     <template v-slot:input>
                       <div class="mt-4 title">Bewerk handicap</div>
-                    </template>
-                    <template v-slot:input>
                       <v-text-field
                         v-model.number="props.item.handicap"
                         label="Bewerken"
@@ -185,6 +203,7 @@ export default {
     tournament: null,
     newPlayer: null,
     showAddPlayerDialog: false,
+    showScoreDialog: false,
     playersTablePagination: {},
     playersTableHeaders: [
       {
