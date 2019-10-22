@@ -54,6 +54,7 @@ namespace SC.API
             services.AddScoped<LeaguePlayerRepository>();
             services.AddScoped<LeagueRepository>();
             services.AddScoped<PlayerRepository>();
+            services.AddScoped<PlayerPositionTournamentRepository>();
             services.AddScoped<PlayerTournamentRepository>();
             services.AddScoped<SettingRepository>();
             services.AddScoped<TournamentRepository>();

@@ -26,6 +26,14 @@ namespace SC.API.DAL.Repositories
                 .SingleOrDefault(t => t.Id == id);
         }
 
+        public Tournament GetWithPlayerPositionsById(Guid id)
+        {
+            return this.context.Tournaments
+                .Include(t => t.PlayerPositionTournament)
+                .ThenInclude(ppt => ppt.Player)
+                .SingleOrDefault(t => t.Id == id);
+        }
+
         public IEnumerable<Tournament> GetByLeagueId(Guid leagueId)
         {
             return this.context.Tournaments.Where(t => t.LeagueId == leagueId)
@@ -51,6 +59,17 @@ namespace SC.API.DAL.Repositories
             }
 
             return players;
+        }
+
+        public IEnumerable<PlayerPositionTournament> GetPlayerPositionsOfTournamentById(Guid id)
+        {
+            List<PlayerPositionTournament> playerPositions = this.context.PlayerPositionTournament
+                .Include(ppt => ppt.Player)
+                .Where(ppt => ppt.TournamentId == id)
+                .OrderBy(ppt => ppt.Position)
+                .ToList();
+
+            return playerPositions;
         }
 
         public IEnumerable<Group> GetGroupsOfTournamentById(Guid id)

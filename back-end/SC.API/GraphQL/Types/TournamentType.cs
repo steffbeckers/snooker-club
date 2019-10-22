@@ -52,6 +52,11 @@ namespace SC.API.GraphQL.Types
                 resolve: context => tournamentRepository.GetPlayersOfTournamentById(context.Source.Id)
             );
 
+            Field<ListGraphType<PlayerPositionTournamentType>>(
+               "playerPositions",
+               resolve: context => tournamentRepository.GetPlayerPositionsOfTournamentById(context.Source.Id)
+           );
+
             Field<ListGraphType<GroupType>>(
                 "groups",
                 resolve: context => tournamentRepository.GetGroupsOfTournamentById(context.Source.Id)

@@ -24,6 +24,7 @@ namespace SC.API.DAL
         public DbSet<League> Leagues { get; set; }
         public DbSet<LeaguePlayer> LeaguePlayer { get; set; }
         public DbSet<Player> Players { get; set; }
+        public DbSet<PlayerPositionTournament> PlayerPositionTournament { get; set; }
         public DbSet<PlayerTournament> PlayerTournament { get; set; }
         public DbSet<Setting> Settings { get; set; }
         public DbSet<Tournament> Tournaments { get; set; }
@@ -123,9 +124,9 @@ namespace SC.API.DAL
             modelBuilder.Entity<GroupPlayer>().ToTable("GroupPlayer");
 
             //// Properties
+            modelBuilder.Entity<GroupPlayer>().Property(e => e.Position).IsRequired();
             modelBuilder.Entity<GroupPlayer>().Property(e => e.GroupId).IsRequired();
             modelBuilder.Entity<GroupPlayer>().Property(e => e.PlayerId).IsRequired();
-            modelBuilder.Entity<GroupPlayer>().Property(e => e.Position).IsRequired();
 
             #endregion
 
@@ -181,6 +182,21 @@ namespace SC.API.DAL
             //// Properties
             modelBuilder.Entity<Player>().Property(e => e.FirstName).IsRequired();
             modelBuilder.Entity<Player>().Property(e => e.LastName).IsRequired();
+
+            #endregion
+
+            #region PlayerPositionTournament
+
+            //// Soft delete query filter
+            modelBuilder.Entity<PlayerPositionTournament>().HasQueryFilter(e => e.DeletedOn == null);
+
+            //// Table
+            modelBuilder.Entity<PlayerPositionTournament>().ToTable("PlayerPositionTournament");
+
+            //// Properties
+            modelBuilder.Entity<PlayerPositionTournament>().Property(e => e.Position).IsRequired();
+            modelBuilder.Entity<PlayerPositionTournament>().Property(e => e.PlayerId).IsRequired();
+            modelBuilder.Entity<PlayerPositionTournament>().Property(e => e.TournamentId).IsRequired();
 
             #endregion
 

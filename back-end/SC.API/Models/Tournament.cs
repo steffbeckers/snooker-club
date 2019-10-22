@@ -26,6 +26,7 @@ namespace SC.API.Models
         public Player RunnerUp { get; set; }
 
         public IList<PlayerTournament> PlayerTournament { get; set; }
+        public IList<PlayerPositionTournament> PlayerPositionTournament { get; set; }
         public IList<Group> Groups { get; set; }
         public IList<Frame> Frames { get; set; }
     }
