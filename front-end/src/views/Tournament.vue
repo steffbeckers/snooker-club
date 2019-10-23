@@ -10,7 +10,7 @@
     <v-breadcrumbs :items="breadcrumbs" divider="/" class="pa-2 pl-4"></v-breadcrumbs>
     <v-container class="pa-2" fluid>
       <v-layout wrap>
-        <v-flex xs12 sm8>
+        <v-flex v-if="tournament.players.length === 3" xs12 sm8>
           <v-card class="ma-2">
             <v-card-title>
               Poule
@@ -27,7 +27,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(player, index) in tournament.players" :key="player.id">
+                    <tr v-for="(playerY, playerIndexY) in tournament.players" :key="playerY.id">
                       <td>
                         <v-autocomplete
                           :items="tournament.players"
@@ -42,9 +42,9 @@
                           dense
                           solo
                           flat
-                          :value="playerOnPosition(index + 1)"
-                          @change="upsertPlayerPositionTournament($event, index + 1)"
-                          @click:clear="deletePlayerPositionTournament(index + 1)"
+                          :value="playerOnPosition(playerIndexY + 1)"
+                          @change="upsertPlayerPositionTournament($event, playerIndexY + 1)"
+                          @click:clear="deletePlayerPositionTournament(playerIndexY + 1)"
                         >
                           <template v-slot:selection="data">
                             {{ data.item.firstName }} {{ data.item.lastName }}
@@ -54,12 +54,15 @@
                           </template>
                         </v-autocomplete>
                       </td>
-                      <td>{{ index + 1 }}</td>
-                      <td v-for="n in tournament.players.length" :key="n">
+                      <td>{{ playerIndexY + 1 }}</td>
+                      <td v-for="(playerX, playerIndexX) in tournament.players" :key="playerX.id">
                         <v-dialog v-model="showScoreDialog" persistent max-width="600px">
                           <template v-slot:activator="{ on }">
-                            <v-btn elevation="0" color="white" style="height: 80%;" small v-on="on" :disabled="index+1 === n">
-                              <span class="title"></span>
+                            <v-btn elevation="0" color="white" style="height: 80%;" small v-on="on" :disabled="playerIndexY === playerIndexX">
+                              <span class="title">
+                                <span>{{ playerIndexY + 1 }}</span>
+                                <span>{{ playerIndexX + 1 }}</span>
+                              </span>
                             </v-btn>
                           </template>
                           <v-card>
@@ -67,8 +70,8 @@
                               <v-container>
                                 <v-row>
                                   <v-col cols="12">
-                                    <span v-if="playerOnPosition(index+1)">Speler 1: {{ playerOnPosition(index+1).firstName }} {{ playerOnPosition(index+1).lastName }}</span><br />
-                                    <span v-if="playerOnPosition(n)">Speler 2: {{ playerOnPosition(n).firstName }} {{ playerOnPosition(n).lastName }}</span>
+                                    <span v-if="playerOnPosition(playerIndexX + 1)">Speler 1: {{ playerOnPosition(playerIndexX + 1).firstName }} {{ playerOnPosition(playerIndexX + 1).lastName }}</span><br />
+                                    <span v-if="playerOnPosition(playerIndexY + 1)">Speler 2: {{ playerOnPosition(playerIndexY + 1).firstName }} {{ playerOnPosition(playerIndexY + 1).lastName }}</span>
                                   </v-col>
                                 </v-row>
                               </v-container>
@@ -183,6 +186,7 @@
         </v-flex>
       </v-layout>
     </v-container>
+    <pre v-if="tournament">{{ tournament | json }}</pre>
   </div>
 </template>
 
