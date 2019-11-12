@@ -37,21 +37,21 @@
             <v-list-item-title>Competities</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item link>
+        <!-- <v-list-item link>
           <v-list-item-content>
             <v-list-item-title>Toernooien</v-list-item-title>
           </v-list-item-content>
-        </v-list-item>
-        <v-list-item link>
+        </v-list-item> -->
+        <v-list-item :to="{ name: 'Players' }" exact link>
           <v-list-item-content>
             <v-list-item-title>Spelers</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item link>
+        <!-- <v-list-item link>
           <v-list-item-content>
             <v-list-item-title>Clubs</v-list-item-title>
           </v-list-item-content>
-        </v-list-item>
+        </v-list-item> -->
       </v-list>
     </v-navigation-drawer>
     <v-content>

@@ -10,7 +10,8 @@
     <v-breadcrumbs :items="breadcrumbs" divider="/" class="pa-2 pl-4"></v-breadcrumbs>
     <v-container class="pa-2" fluid>
       <v-layout wrap>
-        <v-flex v-if="tournament.players.length === 3" xs12 sm8>
+        <!-- 3 -->
+        <v-flex v-if="tournament.players.length === 3 || tournament.players.length === 5" xs12 sm8>
           <v-card class="ma-2">
             <v-card-title>
               Poule
@@ -60,8 +61,6 @@
                           <template v-slot:activator="{ on }">
                             <v-btn elevation="0" color="white" style="height: 80%;" small v-on="on" :disabled="playerIndexY === playerIndexX">
                               <span class="title">
-                                <span>{{ playerIndexY + 1 }}</span>
-                                <span>{{ playerIndexX + 1 }}</span>
                               </span>
                             </v-btn>
                           </template>
@@ -186,7 +185,6 @@
         </v-flex>
       </v-layout>
     </v-container>
-    <pre v-if="tournament">{{ tournament | json }}</pre>
   </div>
 </template>
 
