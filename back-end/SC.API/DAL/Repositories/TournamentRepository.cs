@@ -84,6 +84,7 @@ namespace SC.API.DAL.Repositories
         {
             List<Frame> frames = this.context.Frames
                 .Where(f => f.TournamentId == id)
+                .OrderByDescending(f => f.EndDate)
                 .ToList();
 
             return frames;

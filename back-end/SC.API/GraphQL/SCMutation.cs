@@ -12,7 +12,8 @@ namespace SC.API.GraphQL
             LeagueBLL leagueBLL,
             PlayerBLL playerBLL,
             SettingBLL settingBLL,
-            TournamentBLL tournamentBLL
+            TournamentBLL tournamentBLL,
+            FrameBLL frameBLL
         )
         {
             #region Leagues
@@ -369,6 +370,69 @@ namespace SC.API.GraphQL
 
                     return await context.TryAsyncResolve(
                         async c => await tournamentBLL.RemoveTournamentAsync(id)
+                    );
+                }
+            );
+
+            #endregion
+
+            #region Frames
+
+            FieldAsync<FrameType>(
+                "createFrame",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<FrameInputType>>
+                    {
+                        Name = "frame"
+                    }
+                ),
+                resolve: async context =>
+                {
+                    Frame frame = context.GetArgument<Frame>("frame");
+
+                    return await context.TryAsyncResolve(
+                        async c => await frameBLL.CreateFrameAsync(frame)
+                    );
+                }
+            );
+
+            FieldAsync<FrameType>(
+                "updateFrame",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<IdGraphType>>
+                    {
+                        Name = "id"
+                    },
+                    new QueryArgument<NonNullGraphType<FrameInputType>>
+                    {
+                        Name = "frame"
+                    }
+                ),
+                resolve: async context =>
+                {
+                    Guid id = context.GetArgument<Guid>("id");
+                    Frame frame = context.GetArgument<Frame>("frame");
+
+                    return await context.TryAsyncResolve(
+                        async c => await frameBLL.UpdateFrameAsync(id, frame)
+                    );
+                }
+            );
+
+            FieldAsync<BooleanGraphType>(
+                "removeFrame",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<IdGraphType>>
+                    {
+                        Name = "id"
+                    }
+                ),
+                resolve: async context =>
+                {
+                    Guid id = context.GetArgument<Guid>("id");
+
+                    return await context.TryAsyncResolve(
+                        async c => await frameBLL.RemoveFrameAsync(id)
                     );
                 }
             );

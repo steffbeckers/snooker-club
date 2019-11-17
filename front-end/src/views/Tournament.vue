@@ -16,6 +16,18 @@
           tournament.date | formatDate
         }}</span>
       </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-toolbar-items>
+        <v-btn
+          v-if="
+            tournament.playerPositions.length === 0 ||
+              tournament.players.length < 3
+          "
+          @click="randomizePlayerStartingPositions()"
+          text
+          >Start Loting</v-btn
+        >
+      </v-toolbar-items>
     </v-toolbar>
     <v-breadcrumbs
       :items="breadcrumbs"
@@ -23,30 +35,48 @@
       class="pa-2 pl-4"
     ></v-breadcrumbs>
     <v-container class="pa-2" fluid>
-      <v-dialog v-model="showScoreDialog" persistent max-width="600px">
-        <v-card>
+      <v-dialog v-model="showAddFrameDialog" persistent max-width="600px">
+        <v-card v-if="addFramePlayer1 && addFramePlayer2">
+          <v-card-title>
+            <span class="title">Frame toevoegen</span>
+          </v-card-title>
           <v-card-text>
             <v-container>
               <v-row>
-                <v-col cols="12">
-                  <span v-if="playerOnPosition(1)"
-                    >Speler 1:
-                    {{ playerOnPosition(1).firstName }}
-                    {{ playerOnPosition(1).lastName }}</span
-                  ><br />
-                  <span v-if="playerOnPosition(2)"
-                    >Speler 2:
-                    {{ playerOnPosition(2).firstName }}
-                    {{ playerOnPosition(2).lastName }}</span
-                  >
+                <v-col cols="5" class="text-right">
+                  Speler 1
+                </v-col>
+                <v-col cols="2" class="text-center">
+                  Score
+                </v-col>
+                <v-col cols="5">
+                  Speler 2
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="5" class="text-right">
+                  <span class="headline">
+                    {{ addFramePlayer1.firstName }}
+                    {{ addFramePlayer1.lastName }}
+                  </span>
+                </v-col>
+                <v-col cols="2" class="text-center"> </v-col>
+                <v-col cols="5">
+                  <span class="headline">
+                    {{ addFramePlayer2.firstName }}
+                    {{ addFramePlayer2.lastName }}
+                  </span>
                 </v-col>
               </v-row>
             </v-container>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="showScoreDialog = false"
+            <v-btn color="darken-1" text @click="showAddFrameDialogReset()"
               >Sluiten</v-btn
+            >
+            <v-btn color="blue darken-1" text @click="addFrame()"
+              >Toevoegen</v-btn
             >
           </v-card-actions>
         </v-card>
@@ -108,13 +138,25 @@
                           disabled
                         ></v-btn>
                       </td>
-                      <td class="text-center">
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(1), playerOnPosition(2))
+                        "
+                      >
                         <span class="title">0</span>
                       </td>
-                      <td class="text-center">
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(1), playerOnPosition(3))
+                        "
+                      >
                         <span class="title">0</span>
                       </td>
-                      <td class="text-center">
+                      <td class="text-center total-score">
                         <span class="title">0</span>
                       </td>
                     </tr>
@@ -146,7 +188,13 @@
                         </v-autocomplete>
                       </td>
                       <td>2</td>
-                      <td class="text-center">
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(2), playerOnPosition(1))
+                        "
+                      >
                         <span class="title">0</span>
                       </td>
                       <td>
@@ -157,10 +205,16 @@
                           disabled
                         ></v-btn>
                       </td>
-                      <td class="text-center">
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(2), playerOnPosition(3))
+                        "
+                      >
                         <span class="title">0</span>
                       </td>
-                      <td class="text-center">
+                      <td class="text-center total-score">
                         <span class="title">0</span>
                       </td>
                     </tr>
@@ -192,10 +246,22 @@
                         </v-autocomplete>
                       </td>
                       <td>3</td>
-                      <td class="text-center">
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(3), playerOnPosition(1))
+                        "
+                      >
                         <span class="title">0</span>
                       </td>
-                      <td class="text-center">
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(3), playerOnPosition(2))
+                        "
+                      >
                         <span class="title">0</span>
                       </td>
                       <td>
@@ -206,7 +272,7 @@
                           disabled
                         ></v-btn>
                       </td>
-                      <td class="text-center">
+                      <td class="text-center total-score">
                         <span class="title">0</span>
                       </td>
                     </tr>
@@ -215,7 +281,7 @@
               </v-simple-table>
             </v-card-text>
           </v-card>
-          <v-card class="ma-2">
+          <v-card class="ma-2 mt-4">
             <v-card-title>
               Finale
             </v-card-title>
@@ -237,6 +303,8 @@
                     solo
                     flat
                     :value="tournament.winner"
+                    @change="updateWinner($event)"
+                    @click:clear="deleteWinner()"
                   >
                     <template v-slot:selection="data">
                       {{ data.item.firstName }} {{ data.item.lastName }}
@@ -262,6 +330,8 @@
                     solo
                     flat
                     :value="tournament.runnerUp"
+                    @change="updateRunnerUp($event)"
+                    @click:clear="deleteRunnerUp()"
                   >
                     <template v-slot:selection="data">
                       {{ data.item.firstName }} {{ data.item.lastName }}
@@ -275,8 +345,8 @@
             </v-card-text>
           </v-card>
         </v-flex>
-        <v-flex v-if="tournament.players" xs12 sm4 class="tournament__players">
-          <v-card class="ma-2">
+        <v-flex xs12 sm4>
+          <v-card v-if="tournament.players" class="tournament__players ma-2">
             <v-card-title>
               <span>Spelers</span>
               <v-spacer></v-spacer>
@@ -292,7 +362,7 @@
                 </template>
                 <v-card>
                   <v-card-title>
-                    <span class="headline"
+                    <span class="title"
                       >Speler toevoegen aan
                       {{ tournament.league.displayName }}</span
                     >
@@ -384,6 +454,23 @@
               </v-data-table>
             </v-card-text>
           </v-card>
+          <v-card v-if="tournament.frames" class="tournament__frames ma-2 mt-4">
+            <v-card-title>
+              <span>Frames</span>
+            </v-card-title>
+            <v-card-text>
+              <div v-for="frame in tournament.frames" :key="frame.id">
+                <div class="font-weight-bold text-center">
+                  <span>{{ frame.endDate | formatTime }}</span>
+                </div>
+                <div>
+                  <span v-for="player in frame.players" :key="player.id">
+                    {{ player.firstName }} {{ player.lastName }}
+                  </span>
+                </div>
+              </div>
+            </v-card-text>
+          </v-card>
         </v-flex>
       </v-layout>
     </v-container>
@@ -406,7 +493,6 @@ export default {
     tournament: null,
     newPlayer: null,
     showAddPlayerDialog: false,
-    showScoreDialog: false,
     playersTablePagination: {},
     playersTableHeaders: [
       {
@@ -417,6 +503,9 @@ export default {
       { text: "Handicap", value: "handicap" },
       { text: "", value: "actions", sortable: false }
     ],
+    showAddFrameDialog: false,
+    addFramePlayer1: null,
+    addFramePlayer2: null,
     breadcrumbs: []
   }),
   apollo: {
@@ -450,6 +539,8 @@ export default {
             }
             frames {
               id
+              startDate
+              endDate
               players {
                 id
                 firstName
@@ -568,10 +659,10 @@ export default {
         p => p.id === playerPosition.playerId
       );
 
-      console.log(
-        "Player on position " + position + ": ",
-        player.firstName + " " + player.lastName
-      );
+      // console.log(
+      //   "Player on position " + position + ": ",
+      //   player.firstName + " " + player.lastName
+      // );
 
       return player;
     },
@@ -707,6 +798,174 @@ export default {
         update: (store, { data: { unlinkPlayerPositionFromTournament } }) => {
           this.tournament.playerPositions =
             unlinkPlayerPositionFromTournament.playerPositions;
+        }
+      });
+    },
+    randomizePlayerStartingPositions() {
+      if (
+        this.tournament.playerPositions.length > 0 ||
+        this.tournament.players.length < 3
+      ) {
+        return;
+      }
+
+      let players = this.tournament.players.map(p => {
+        return Object.assign({}, p);
+      });
+
+      // Random numbers to choose positions
+      players.forEach(player => {
+        player.random = Math.random();
+      });
+
+      // Sort players based on random number
+      players.sort((a, b) => (a.random > b.random ? 1 : -1));
+
+      // Update player positions
+      players.forEach((player, index) => {
+        this.upsertPlayerPositionTournament(player, index + 1);
+      });
+    },
+    showAddFrame(player1, player2) {
+      if (!player1 || !player2) {
+        return;
+      }
+
+      this.addFramePlayer1 = player1;
+      this.addFramePlayer2 = player2;
+      this.showAddFrameDialog = true;
+    },
+    showAddFrameDialogReset() {
+      this.showAddFrameDialog = false;
+      this.addFramePlayer1 = null;
+      this.addFramePlayer2 = null;
+    },
+    addFrame() {
+      // TODO
+    },
+    updateWinner(player) {
+      if (!player || !this.tournament) {
+        return;
+      }
+
+      const tournamentUpdate = {
+        date: this.tournament.date,
+        displayName: this.tournament.displayName,
+        winnerId: player.id,
+        runnerUpId: this.tournament.runnerUp && this.tournament.runnerUp.id
+      };
+
+      this.$apollo.mutate({
+        mutation: gql`
+          mutation($id: ID!, $tournament: tournamentInput!) {
+            updateTournament(id: $id, tournament: $tournament) {
+              id
+              winner {
+                id
+                firstName
+                lastName
+              }
+            }
+          }
+        `,
+        variables: {
+          id: this.tournament.id,
+          tournament: tournamentUpdate
+        },
+        update: (store, { data: { updateTournament } }) => {
+          this.tournament.winner = updateTournament.winner;
+        }
+      });
+    },
+    deleteWinner() {
+      if (!this.tournament) {
+        return;
+      }
+
+      const tournamentUpdate = {
+        date: this.tournament.date,
+        displayName: this.tournament.displayName,
+        winnerId: null,
+        runnerUpId: this.tournament.runnerUp && this.tournament.runnerUp.id
+      };
+
+      this.$apollo.mutate({
+        mutation: gql`
+          mutation($id: ID!, $tournament: tournamentInput!) {
+            updateTournament(id: $id, tournament: $tournament) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id: this.tournament.id,
+          tournament: tournamentUpdate
+        },
+        update: (store, { data: { updateTournament } }) => {
+          this.tournament.winner = null;
+        }
+      });
+    },
+    updateRunnerUp(player) {
+      if (!player || !this.tournament) {
+        return;
+      }
+
+      const tournamentUpdate = {
+        date: this.tournament.date,
+        displayName: this.tournament.displayName,
+        winnerId: this.tournament.winner && this.tournament.winner.id,
+        runnerUpId: player.id
+      };
+
+      this.$apollo.mutate({
+        mutation: gql`
+          mutation($id: ID!, $tournament: tournamentInput!) {
+            updateTournament(id: $id, tournament: $tournament) {
+              id
+              runnerUp {
+                id
+                firstName
+                lastName
+              }
+            }
+          }
+        `,
+        variables: {
+          id: this.tournament.id,
+          tournament: tournamentUpdate
+        },
+        update: (store, { data: { updateTournament } }) => {
+          this.tournament.runnerUp = updateTournament.runnerUp;
+        }
+      });
+    },
+    deleteRunnerUp() {
+      if (!this.tournament) {
+        return;
+      }
+
+      const tournamentUpdate = {
+        date: this.tournament.date,
+        displayName: this.tournament.displayName,
+        winnerId: this.tournament.winner && this.tournament.winner.id,
+        runnerUpId: null
+      };
+
+      this.$apollo.mutate({
+        mutation: gql`
+          mutation($id: ID!, $tournament: tournamentInput!) {
+            updateTournament(id: $id, tournament: $tournament) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id: this.tournament.id,
+          tournament: tournamentUpdate
+        },
+        update: (store, { data: { updateTournament } }) => {
+          this.tournament.runnerUp = null;
         }
       });
     }

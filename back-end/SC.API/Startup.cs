@@ -65,6 +65,7 @@ namespace SC.API
             services.AddScoped<PlayerBLL>();
             services.AddScoped<SettingBLL>();
             services.AddScoped<TournamentBLL>();
+            services.AddScoped<FrameBLL>();
 
             // GraphQL
             services.AddScoped<IDependencyResolver>(s =>

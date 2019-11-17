@@ -10,7 +10,7 @@
           </template>
           <v-card>
             <v-card-title>
-              <span class="headline">Speler toevoegen</span>
+              <span class="title">Speler toevoegen</span>
             </v-card-title>
             <v-card-text>
               <v-container>
@@ -36,8 +36,12 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="darken-1" text @click="showAddPlayerDialog = false">Sluiten</v-btn>
-              <v-btn color="blue darken-1" text @click="addPlayer()">Toevoegen</v-btn>
+              <v-btn color="darken-1" text @click="showAddPlayerDialog = false"
+                >Sluiten</v-btn
+              >
+              <v-btn color="blue darken-1" text @click="addPlayer()"
+                >Toevoegen</v-btn
+              >
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -66,9 +70,21 @@
     </v-toolbar>
     <v-container fluid>
       <v-layout v-if="players" wrap>
-        <v-flex v-for="player in players" :key="player.id" xs12 md4 class="ma-2">
-          <v-card @click="$router.push({ name: 'Player', params: { id: player.id }})" tile style="cursor: pointer">
-            <v-card-title>{{ player.firstName }} {{ player.lastName }}</v-card-title>
+        <v-flex
+          v-for="player in players"
+          :key="player.id"
+          xs12
+          md4
+          class="ma-2"
+        >
+          <v-card
+            @click="$router.push({ name: 'Player', params: { id: player.id } })"
+            tile
+            style="cursor: pointer"
+          >
+            <v-card-title
+              >{{ player.firstName }} {{ player.lastName }}</v-card-title
+            >
           </v-card>
         </v-flex>
       </v-layout>
@@ -77,14 +93,14 @@
 </template>
 
 <script>
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export default {
-  name: 'Players',
+  name: "Players",
   data: () => ({
     players: [],
     newPlayer: {},
-    showAddPlayerDialog: false,
+    showAddPlayerDialog: false
   }),
   apollo: {
     players: gql`
@@ -101,30 +117,32 @@ export default {
     addPlayer() {
       const newPlayer = this.newPlayer;
 
-      this.$apollo.mutate({
-        mutation: gql`
-          mutation ($player: playerInput!) {
-            createPlayer(player: $player) {
-              id
-              firstName
-              lastName
+      this.$apollo
+        .mutate({
+          mutation: gql`
+            mutation($player: playerInput!) {
+              createPlayer(player: $player) {
+                id
+                firstName
+                lastName
+              }
             }
+          `,
+          variables: {
+            player: newPlayer
+          },
+          update: (store, { data: { createPlayer } }) => {
+            this.players.unshift(createPlayer);
           }
-        `,
-        variables: {
-          player: newPlayer
-        },
-        update: (store, { data: { createPlayer } }) => {
-          this.players.unshift(createPlayer);
-        },
-      }).finally(() => {
-        // Close dialog
-        this.showAddPlayerDialog = false;
+        })
+        .finally(() => {
+          // Close dialog
+          this.showAddPlayerDialog = false;
 
-        // Reset
-        this.newPlayer = {};
-      });
+          // Reset
+          this.newPlayer = {};
+        });
     }
   }
-}
+};
 </script>
