@@ -36,33 +36,69 @@
     ></v-breadcrumbs>
     <v-container class="pa-2" fluid>
       <v-dialog v-model="showAddFrameDialog" persistent max-width="600px">
-        <v-card v-if="addFramePlayer1 && addFramePlayer2">
+        <v-card
+          v-if="addFramePlayer1 && addFramePlayer2"
+          @keyup.enter="addFrame()"
+        >
           <v-card-title>
             <span class="title">Frame toevoegen</span>
           </v-card-title>
           <v-card-text>
             <v-container>
               <v-row>
-                <v-col cols="5" class="text-right">
+                <v-col cols="4" class="text-right">
                   Speler 1
                 </v-col>
-                <v-col cols="2" class="text-center">
+                <v-col cols="4" class="text-center">
                   Score
                 </v-col>
-                <v-col cols="5">
+                <v-col cols="4">
                   Speler 2
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="5" class="text-right">
-                  <span class="headline">
+                <v-col cols="4" class="text-right">
+                  <span
+                    class="headline"
+                  >
                     {{ addFramePlayer1.firstName }}
                     {{ addFramePlayer1.lastName }}
                   </span>
                 </v-col>
-                <v-col cols="2" class="text-center"> </v-col>
-                <v-col cols="5">
-                  <span class="headline">
+                <v-col cols="4" class="text-center">
+                  <v-layout>
+                    <v-flex>
+                      <v-text-field
+                        ref="addFramePlayer1Score"
+                        class="headline text-field-text-center"
+                        v-model.number="addFramePlayer1.score"
+                        label="Score"
+                        dense
+                        solo
+                        flat
+                        @focus="$event.target.select()"
+                      ></v-text-field>
+                    </v-flex>
+                    <v-flex>
+                      <span class="headline">-</span>
+                    </v-flex>
+                    <v-flex>
+                      <v-text-field
+                        class="headline text-field-text-center"
+                        v-model.number="addFramePlayer2.score"
+                        label="Score"
+                        dense
+                        solo
+                        flat
+                        @focus="$event.target.select()"
+                      ></v-text-field>
+                    </v-flex>
+                  </v-layout>
+                </v-col>
+                <v-col cols="4">
+                  <span
+                    class="headline"
+                  >
                     {{ addFramePlayer2.firstName }}
                     {{ addFramePlayer2.lastName }}
                   </span>
@@ -82,9 +118,9 @@
         </v-card>
       </v-dialog>
       <v-layout wrap>
-        <v-flex xs12 sm8>
+        <v-flex xs12 sm8 v-if="tournament.players.length >= 3">
           <!-- 3 -->
-          <v-card v-if="tournament.players.length === 3" class="ma-2">
+          <v-card v-if="tournament.players.length === 3" class="ma-2 mb-4">
             <v-card-title>
               Poule
             </v-card-title>
@@ -281,7 +317,7 @@
               </v-simple-table>
             </v-card-text>
           </v-card>
-          <v-card class="ma-2 mt-4">
+          <v-card class="ma-2">
             <v-card-title>
               Finale
             </v-card-title>
@@ -346,7 +382,10 @@
           </v-card>
         </v-flex>
         <v-flex xs12 sm4>
-          <v-card v-if="tournament.players" class="tournament__players ma-2">
+          <v-card
+            v-if="tournament.players"
+            class="tournament__players ma-2 mb-4"
+          >
             <v-card-title>
               <span>Spelers</span>
               <v-spacer></v-spacer>
@@ -417,7 +456,11 @@
               </v-dialog>
             </v-card-title>
             <v-card-text>
+              <p v-if="tournament.players.length < 3">
+                Voeg minstens 3 spelers toe om het toernooi te starten.
+              </p>
               <v-data-table
+                v-if="tournament.players.length > 0"
                 :headers="playersTableHeaders"
                 :items="tournament.players"
                 dense
@@ -452,23 +495,157 @@
                   </v-icon>
                 </template>
               </v-data-table>
+              <p
+                class="ma-0 text-center"
+                v-if="tournament.players.length === 0"
+              >
+                Er zijn nog geen spelers toegevoegd aan dit toernooi.
+              </p>
             </v-card-text>
           </v-card>
-          <v-card v-if="tournament.frames" class="tournament__frames ma-2 mt-4">
-            <v-card-title>
+          <v-card
+            v-if="tournament.frames && tournament.players.length >= 3"
+            class="tournament__frames ma-2"
+          >
+            <v-card-title class="pb-0">
               <span>Frames</span>
             </v-card-title>
             <v-card-text>
-              <div v-for="frame in tournament.frames" :key="frame.id">
-                <div class="font-weight-bold text-center">
-                  <span>{{ frame.endDate | formatTime }}</span>
-                </div>
-                <div>
-                  <span v-for="player in frame.players" :key="player.id">
-                    {{ player.firstName }} {{ player.lastName }}
-                  </span>
-                </div>
+              <div
+                v-for="frame in tournament.frames"
+                :key="frame.id"
+              >
+                <v-dialog
+                  v-model="frame.showUpdateFrameDialog"
+                  persistent
+                  max-width="600px"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-container v-on="on" class="pt-0 pb-0">
+                      <v-row class="pt-2">
+                        <v-col cols="12" class="pa-0 font-weight-light text-center">
+                          <span v-if="frame.startDate">{{ frame.startDate | formatTime }}</span>
+                          <span v-if="frame.startDate && frame.endDate"> - </span>
+                          <span v-if="frame.endDate">{{ frame.endDate | formatTime }}</span>
+                        </v-col>
+                      </v-row>
+                      <v-row class="pb-2" style="border-bottom: 1px solid #eeeeee">
+                        <v-col cols="4" class="pa-0 text-right" 
+                              :class="{
+                                'font-weight-black':
+                                  frame.players[0].score > frame.players[1].score
+                              }">
+                          {{ frame.players[0].firstName }} {{ frame.players[0].lastName }}
+                        </v-col>
+                        <v-col cols="4" class="pa-0 text-center">
+                          <span style="white-space: pre">
+                            <span :class="{
+                                'font-weight-black':
+                                  frame.players[0].score > frame.players[1].score
+                              }">{{ frame.players[0].score }}</span> - <span :class="{
+                                'font-weight-black':
+                                  frame.players[1].score > frame.players[0].score
+                              }">{{ frame.players[1].score }}</span>
+                          </span>
+                        </v-col>
+                        <v-col cols="4" class="pa-0"
+                              :class="{
+                                'font-weight-black':
+                                  frame.players[1].score > frame.players[0].score
+                              }">
+                          {{ frame.players[1].firstName }} {{ frame.players[1].lastName }}
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </template>
+                  <v-card @keyup.enter="updateFrame(frame)">
+                    <v-card-title>
+                      <span class="title">Frame</span>
+                      <v-spacer></v-spacer>
+                      <v-btn icon @click="deleteFrame(frame)">
+                        <v-icon>
+                          delete
+                        </v-icon>
+                      </v-btn>
+                    </v-card-title>
+                    <v-card-text>
+                      <v-container>
+                        <v-row>
+                          <v-col cols="4" class="text-right">
+                            Speler 1
+                          </v-col>
+                          <v-col cols="4" class="text-center">
+                            Score
+                          </v-col>
+                          <v-col cols="4">
+                            Speler 2
+                          </v-col>
+                        </v-row>
+                        <v-row>
+                          <v-col cols="4" class="text-right">
+                            <span
+                              class="headline"
+                            >
+                              {{ frame.players[0].firstName }}
+                              {{ frame.players[0].lastName }}
+                            </span>
+                          </v-col>
+                          <v-col cols="4" class="text-center">
+                            <v-layout>
+                              <v-flex>
+                                <v-text-field
+                                  ref="updateFramePlayer1Score"
+                                  class="headline text-field-text-center"
+                                  v-model.number="frame.players[0].score"
+                                  label="Score"
+                                  dense
+                                  solo
+                                  flat
+                                  @focus="$event.target.select()"
+                                ></v-text-field>
+                              </v-flex>
+                              <v-flex>
+                                <span class="headline">-</span>
+                              </v-flex>
+                              <v-flex>
+                                <v-text-field
+                                  class="headline text-field-text-center"
+                                  v-model.number="frame.players[1].score"
+                                  label="Score"
+                                  dense
+                                  solo
+                                  flat
+                                  @focus="$event.target.select()"
+                                ></v-text-field>
+                              </v-flex>
+                            </v-layout>
+                          </v-col>
+                          <v-col cols="4">
+                            <span
+                              class="headline"
+                            >
+                              {{ frame.players[1].firstName }}
+                              {{ frame.players[1].lastName }}
+                            </span>
+                          </v-col>
+                        </v-row>
+                      </v-container>
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn color="darken-1" text @click="frame.showUpdateFrameDialog = false">
+                        Sluiten
+                      </v-btn>
+                      <v-btn color="blue darken-1" text @click="updateFrame(frame)"
+                        >Opslaan</v-btn
+                      >
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
               </div>
+              <p class="ma-0 mt-2 text-center" v-if="tournament.frames.length === 0">
+                Er zijn nog geen frames gespeeld.
+              </p>
             </v-card-text>
           </v-card>
         </v-flex>
@@ -548,9 +725,7 @@ export default {
                 handicap
                 score
               }
-              winner {
-                id
-              }
+              winnerId
             }
             winner {
               id
@@ -832,7 +1007,11 @@ export default {
       }
 
       this.addFramePlayer1 = player1;
+      this.addFramePlayer1.score = 0;
+
       this.addFramePlayer2 = player2;
+      this.addFramePlayer2.score = 0;
+
       this.showAddFrameDialog = true;
     },
     showAddFrameDialogReset() {
@@ -841,7 +1020,90 @@ export default {
       this.addFramePlayer2 = null;
     },
     addFrame() {
-      // TODO
+      if (!this.addFramePlayer1 || !this.addFramePlayer2) {
+        return;
+      }
+
+      // Data validation
+      if (
+        this.addFramePlayer1.score < 0 ||
+        this.addFramePlayer2.score < 0 ||
+        this.addFramePlayer1.score === this.addFramePlayer2.score
+      ) {
+        return;
+      }
+
+      const frame = {
+        tournamentId: this.tournament.id,
+        endDate: new Date().toISOString(),
+        winnerId: this.addFramePlayer2.score > this.addFramePlayer1.score ? this.addFramePlayer2.id : this.addFramePlayer1.id,
+        framePlayer: [
+          {
+            position: 1,
+            playerId: this.addFramePlayer1.id,
+            score: this.addFramePlayer1.score
+          },
+          {
+            position: 2,
+            playerId: this.addFramePlayer2.id,
+            score: this.addFramePlayer2.score
+          }
+        ]
+      };
+
+      this.$apollo
+        .mutate({
+          mutation: gql`
+            mutation($frame: frameInput!) {
+              createFrame(frame: $frame) {
+                id
+                startDate
+                endDate
+                winnerId
+                players {
+                  id
+                  firstName
+                  lastName
+                  position
+                  score
+                }
+              }
+            }
+          `,
+          variables: {
+            frame: frame
+          },
+          update: (store, { data: { createFrame } }) => {
+            this.tournament.frames.unshift(createFrame);
+          }
+        })
+        .finally(() => {
+          // Reset
+          this.showAddFrameDialogReset();
+        });
+    },
+    deleteFrame(frame) {
+      if (!frame || !this.tournament) {
+        return;
+      }
+
+      this.$apollo.mutate({
+        mutation: gql`
+          mutation ($id: ID!) {
+            removeFrame(id: $id)
+          }
+        `,
+        variables: {
+          id: frame.id
+        },
+        update: (store, { data: { removeFrame } }) => {
+          let frameIds = this.tournament.frames.map(f => { return f.id });
+          let frameIndex = frameIds.indexOf(removeFrame.id);
+          if (frameIds !== -1) {
+            this.tournament.frames.splice(frameIndex, 1);
+          }
+        }
+      });
     },
     updateWinner(player) {
       if (!player || !this.tournament) {
@@ -901,7 +1163,7 @@ export default {
           id: this.tournament.id,
           tournament: tournamentUpdate
         },
-        update: (store, { data: { updateTournament } }) => {
+        update: () => {
           this.tournament.winner = null;
         }
       });
@@ -964,7 +1226,7 @@ export default {
           id: this.tournament.id,
           tournament: tournamentUpdate
         },
-        update: (store, { data: { updateTournament } }) => {
+        update: () => {
           this.tournament.runnerUp = null;
         }
       });
