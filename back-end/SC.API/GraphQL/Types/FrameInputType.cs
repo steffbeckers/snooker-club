@@ -10,6 +10,7 @@ namespace SC.API.GraphQL.Types
             Field<DateTimeGraphType>("startDate");
             Field<DateTimeGraphType>("endDate");
             Field<IdGraphType>("tournamentId");
+            Field<IntGraphType>("tournamentPhase");
             Field<IdGraphType>("groupId");
             Field<IdGraphType>("winnerId");
             Field<ListGraphType<FramePlayerInputType>>("framePlayer");

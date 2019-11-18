@@ -13,6 +13,7 @@ namespace SC.API.Models
 
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public int? TournamentPhase { get; set; }
 
         public Guid? TournamentId { get; set; }
         public Tournament Tournament { get; set; }

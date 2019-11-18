@@ -31,6 +31,7 @@ namespace SC.API.BLL
             // Mapping
             frame.StartDate = frameUpdate.StartDate;
             frame.EndDate = frameUpdate.EndDate;
+            frame.TournamentPhase = frameUpdate.TournamentPhase;
             frame.TournamentId = frameUpdate.TournamentId;
             frame.GroupId = frameUpdate.GroupId;
             frame.WinnerId = frameUpdate.WinnerId;

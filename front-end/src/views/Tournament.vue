@@ -71,6 +71,7 @@
                       <v-text-field
                         ref="addFramePlayer1Score"
                         class="headline text-field-text-center"
+                        style="text-align: center"
                         v-model.number="addFramePlayer1.score"
                         label="Score"
                         dense
@@ -166,7 +167,7 @@
                         </v-autocomplete>
                       </td>
                       <td>1</td>
-                      <td>
+                      <td class="text-center">
                         <v-btn
                           elevation="0"
                           style="height: 80%;"
@@ -193,7 +194,7 @@
                         <span class="title">0</span>
                       </td>
                       <td class="text-center total-score">
-                        <span class="title">0</span>
+                        <span class="title">{{ playerTotalFramesInPhase(playerOnPosition(1), 1) }}</span>
                       </td>
                     </tr>
                     <tr>
@@ -233,7 +234,7 @@
                       >
                         <span class="title">0</span>
                       </td>
-                      <td>
+                      <td class="text-center">
                         <v-btn
                           elevation="0"
                           style="height: 80%;"
@@ -251,7 +252,7 @@
                         <span class="title">0</span>
                       </td>
                       <td class="text-center total-score">
-                        <span class="title">0</span>
+                        <span class="title">{{ playerTotalFramesInPhase(playerOnPosition(2), 1) }}</span>
                       </td>
                     </tr>
                     <tr>
@@ -300,7 +301,7 @@
                       >
                         <span class="title">0</span>
                       </td>
-                      <td>
+                      <td class="text-center">
                         <v-btn
                           elevation="0"
                           style="height: 80%;"
@@ -309,7 +310,7 @@
                         ></v-btn>
                       </td>
                       <td class="text-center total-score">
-                        <span class="title">0</span>
+                        <span class="title">{{ playerTotalFramesInPhase(playerOnPosition(3), 1) }}</span>
                       </td>
                     </tr>
                   </tbody>
@@ -456,7 +457,7 @@
               </v-dialog>
             </v-card-title>
             <v-card-text>
-              <p v-if="tournament.players.length < 3">
+              <p v-if="tournament.players.length < 3" class="text-center">
                 Voeg minstens 3 spelers toe om het toernooi te starten.
               </p>
               <v-data-table
@@ -659,6 +660,8 @@
 .tournament__display-name {
   margin-right: 20px;
 }
+
+
 </style>
 
 <script>
@@ -681,6 +684,7 @@ export default {
       { text: "", value: "actions", sortable: false }
     ],
     showAddFrameDialog: false,
+    addFrameTournamentPhase: 1,
     addFramePlayer1: null,
     addFramePlayer2: null,
     breadcrumbs: []
@@ -718,11 +722,12 @@ export default {
               id
               startDate
               endDate
+              tournamentPhase
               players {
                 id
                 firstName
                 lastName
-                handicap
+                position
                 score
               }
               winnerId
@@ -740,7 +745,7 @@ export default {
           }
         }
       `,
-      fetchPolicy: "no-cache",
+      //fetchPolicy: "no-cache", // Doesn't work???
       variables() {
         return {
           id: this.$route.params.id
@@ -834,12 +839,18 @@ export default {
         p => p.id === playerPosition.playerId
       );
 
-      // console.log(
-      //   "Player on position " + position + ": ",
-      //   player.firstName + " " + player.lastName
-      // );
-
       return player;
+    },
+    playerTotalFramesInPhase(player, phase) {
+      let total = 0;
+
+      this.tournament.frames.forEach(frame => {
+        if (frame.winnerId === player.id && frame.tournamentPhase === phase) {
+          total += 1;
+        }
+      });
+
+      return total;
     },
     upsertPlayerTournament(player) {
       if (!player || !this.tournament) {
@@ -1001,10 +1012,12 @@ export default {
         this.upsertPlayerPositionTournament(player, index + 1);
       });
     },
-    showAddFrame(player1, player2) {
+    showAddFrame(player1, player2, phase = 1) {
       if (!player1 || !player2) {
         return;
       }
+
+      this.addFrameTournamentPhase = phase
 
       this.addFramePlayer1 = player1;
       this.addFramePlayer1.score = 0;
@@ -1015,6 +1028,7 @@ export default {
       this.showAddFrameDialog = true;
     },
     showAddFrameDialogReset() {
+      this.addFrameTournamentPhase = 1;
       this.showAddFrameDialog = false;
       this.addFramePlayer1 = null;
       this.addFramePlayer2 = null;
@@ -1035,6 +1049,7 @@ export default {
 
       const frame = {
         tournamentId: this.tournament.id,
+        tournamentPhase: this.addFrameTournamentPhase,
         endDate: new Date().toISOString(),
         winnerId: this.addFramePlayer2.score > this.addFramePlayer1.score ? this.addFramePlayer2.id : this.addFramePlayer1.id,
         framePlayer: [
@@ -1057,6 +1072,7 @@ export default {
             mutation($frame: frameInput!) {
               createFrame(frame: $frame) {
                 id
+                tournamentPhase
                 startDate
                 endDate
                 winnerId

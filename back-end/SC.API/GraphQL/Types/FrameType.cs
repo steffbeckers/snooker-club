@@ -17,6 +17,7 @@ namespace SC.API.GraphQL.Types
             Field(x => x.Id, type: typeof(IdGraphType));
             Field(x => x.StartDate, type: typeof(DateTimeGraphType));
             Field(x => x.EndDate, type: typeof(DateTimeGraphType));
+            Field(x => x.TournamentPhase, type: typeof(IntGraphType), nullable: true);
 
             Field(x => x.TournamentId, type: typeof(IdGraphType), nullable: true);
             Field<TournamentType>(
