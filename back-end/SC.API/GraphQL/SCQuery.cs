@@ -12,6 +12,7 @@ namespace SC.API.GraphQL
             LeagueRepository leagueRepository,
             PlayerRepository playerRepository,
             TournamentRepository tournamentRepository,
+            FrameRepository frameRepository,
             UserRepository userRepository,
             SettingRepository settingRepository
         )
@@ -47,6 +48,17 @@ namespace SC.API.GraphQL
                 "tournament",
                 arguments: new QueryArguments(new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id" }),
                 resolve: context => tournamentRepository.GetById(context.GetArgument<Guid>("id"))
+            );
+
+            // Frames
+            Field<ListGraphType<FrameType>>(
+                "frames",
+                resolve: context => frameRepository.Get(null, t => t.OrderByDescending(t => t.EndDate))
+            );
+            Field<FrameType>(
+                "frame",
+                arguments: new QueryArguments(new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id" }),
+                resolve: context => frameRepository.GetById(context.GetArgument<Guid>("id"))
             );
 
             // Users
