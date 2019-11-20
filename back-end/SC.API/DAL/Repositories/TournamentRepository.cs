@@ -42,20 +42,26 @@ namespace SC.API.DAL.Repositories
 
         public IEnumerable<Player> GetPlayersOfTournamentById(Guid id)
         {
-            List<Player> players = this.context.PlayerTournament
-                .Include(lp => lp.Player)
-                .Where(lp => lp.TournamentId == id)
-                .Select(lp => lp.Player)
-                .OrderBy(p => p.FirstName)
+            Tournament tournament = this.context.Tournaments.Find(id);
+            if (tournament == null)
+            {
+                return null;
+            }
+
+            List<PlayerTournament> playerTournaments = this.context.PlayerTournament
+                .Include(pt => pt.Player)
+                .Where(pt => pt.TournamentId == id)
                 .ToList();
 
-            // Include handicaps from PlayerTournament
-            foreach (Player player in players)
-            {
-                player.Handicap = this.context.PlayerTournament
-                    .Single(lp => lp.TournamentId == id && lp.PlayerId == player.Id)
-                    .Handicap;
-            }
+            List<Player> players = playerTournaments.Select(pt => {
+                return new Player()
+                {
+                    Id = pt.Player.Id,
+                    FirstName = pt.Player.FirstName,
+                    LastName = pt.Player.LastName,
+                    Handicap = pt.Handicap
+                };
+            }).ToList();
 
             return players;
         }

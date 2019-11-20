@@ -58,9 +58,7 @@
               </v-row>
               <v-row>
                 <v-col cols="4" class="text-right">
-                  <span
-                    class="headline"
-                  >
+                  <span class="headline">
                     {{ addFramePlayer1.firstName }}
                     {{ addFramePlayer1.lastName }}
                   </span>
@@ -69,7 +67,6 @@
                   <v-layout>
                     <v-flex>
                       <v-text-field
-                        ref="addFramePlayer1Score"
                         class="headline text-field-text-center"
                         style="text-align: center"
                         v-model.number="addFramePlayer1.score"
@@ -77,7 +74,7 @@
                         dense
                         solo
                         flat
-                        @focus="$event.target.select()"
+                        autofocus
                       ></v-text-field>
                     </v-flex>
                     <v-flex>
@@ -91,18 +88,30 @@
                         dense
                         solo
                         flat
-                        @focus="$event.target.select()"
                       ></v-text-field>
                     </v-flex>
                   </v-layout>
                 </v-col>
                 <v-col cols="4">
-                  <span
-                    class="headline"
-                  >
+                  <span class="headline">
                     {{ addFramePlayer2.firstName }}
                     {{ addFramePlayer2.lastName }}
                   </span>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="4" class="text-right">
+                  <v-btn large depressed :color="addFramePlayer1.id === addFrameWinnerId ? 'primary' : ''" @click="addFrameWinnerId = addFramePlayer1.id">
+                    {{ addFramePlayer1.firstName }}
+                  </v-btn>
+                </v-col>
+                <v-col cols="4" class="text-center mt-3">
+                  Of kies een winnaar
+                </v-col>
+                <v-col cols="4">
+                  <v-btn large depressed :color="addFramePlayer2.id === addFrameWinnerId ? 'primary' : ''" @click="addFrameWinnerId = addFramePlayer2.id">
+                    {{ addFramePlayer2.firstName }}
+                  </v-btn>
                 </v-col>
               </v-row>
             </v-container>
@@ -118,11 +127,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog
-        v-model="showUpdateFrameDialog"
-        persistent
-        max-width="600px"
-      >
+      <v-dialog v-model="showUpdateFrameDialog" persistent max-width="600px">
         <!-- TODO: <v-card @keyup.enter="updateFrame(frame)"> -->
         <v-card v-if="frameToUpdate">
           <v-card-title>
@@ -149,9 +154,7 @@
               </v-row>
               <v-row>
                 <v-col cols="4" class="text-right">
-                  <span
-                    class="headline"
-                  >
+                  <span class="headline">
                     {{ frameToUpdate.players[0].firstName }}
                     {{ frameToUpdate.players[0].lastName }}
                   </span>
@@ -160,7 +163,6 @@
                   <v-layout>
                     <v-flex>
                       <v-text-field
-                        ref="updateFramePlayer1Score"
                         class="headline text-field-text-center"
                         v-model.number="frameToUpdate.players[0].score"
                         label="Score"
@@ -187,12 +189,25 @@
                   </v-layout>
                 </v-col>
                 <v-col cols="4">
-                  <span
-                    class="headline"
-                  >
+                  <span class="headline">
                     {{ frameToUpdate.players[1].firstName }}
                     {{ frameToUpdate.players[1].lastName }}
                   </span>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="4" class="text-right">
+                  <v-btn large depressed :color="frameToUpdate.players[0].id === frameToUpdate.winnerId ? 'primary' : ''" @click="frameToUpdate.winnerId = frameToUpdate.players[0].id">
+                    {{ frameToUpdate.players[0].firstName }}
+                  </v-btn>
+                </v-col>
+                <v-col cols="4" class="text-center mt-3">
+                  Of kies een winnaar
+                </v-col>
+                <v-col cols="4">
+                  <v-btn large depressed :color="frameToUpdate.players[1].id === frameToUpdate.winnerId ? 'primary' : ''" @click="frameToUpdate.winnerId = frameToUpdate.players[1].id">
+                    {{ frameToUpdate.players[1].firstName }}
+                  </v-btn>
                 </v-col>
               </v-row>
             </v-container>
@@ -205,9 +220,7 @@
             <!-- <v-btn color="blue darken-1" text @click="updateFrame(frame)"
               >Opslaan</v-btn
             > -->
-            <v-btn color="blue darken-1" text
-              >Opslaan</v-btn
-            >
+            <v-btn color="blue darken-1" text>Opslaan</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -275,7 +288,13 @@
                           showAddFrame(playerOnPosition(1), playerOnPosition(2))
                         "
                       >
-                        <span class="title">{{ playerFramesWonAgainstInPhase(playerOnPosition(1), playerOnPosition(2), 1) }}</span>
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(1),
+                            playerOnPosition(2),
+                            1
+                          )
+                        }}</span>
                       </td>
                       <td
                         class="text-center"
@@ -284,10 +303,18 @@
                           showAddFrame(playerOnPosition(1), playerOnPosition(3))
                         "
                       >
-                        <span class="title">{{ playerFramesWonAgainstInPhase(playerOnPosition(1), playerOnPosition(3), 1) }}</span>
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(1),
+                            playerOnPosition(3),
+                            1
+                          )
+                        }}</span>
                       </td>
                       <td class="text-center total-score">
-                        <span class="title">{{ playerTotalFramesInPhase(playerOnPosition(1), 1) }}</span>
+                        <span class="title">{{
+                          playerTotalFramesInPhase(playerOnPosition(1), 1)
+                        }}</span>
                       </td>
                     </tr>
                     <tr>
@@ -325,7 +352,13 @@
                           showAddFrame(playerOnPosition(2), playerOnPosition(1))
                         "
                       >
-                        <span class="title">{{ playerFramesWonAgainstInPhase(playerOnPosition(2), playerOnPosition(1), 1) }}</span>
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(2),
+                            playerOnPosition(1),
+                            1
+                          )
+                        }}</span>
                       </td>
                       <td class="text-center">
                         <v-btn
@@ -342,10 +375,18 @@
                           showAddFrame(playerOnPosition(2), playerOnPosition(3))
                         "
                       >
-                        <span class="title">{{ playerFramesWonAgainstInPhase(playerOnPosition(2), playerOnPosition(3), 1) }}</span>
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(2),
+                            playerOnPosition(3),
+                            1
+                          )
+                        }}</span>
                       </td>
                       <td class="text-center total-score">
-                        <span class="title">{{ playerTotalFramesInPhase(playerOnPosition(2), 1) }}</span>
+                        <span class="title">{{
+                          playerTotalFramesInPhase(playerOnPosition(2), 1)
+                        }}</span>
                       </td>
                     </tr>
                     <tr>
@@ -383,7 +424,13 @@
                           showAddFrame(playerOnPosition(3), playerOnPosition(1))
                         "
                       >
-                        <span class="title">{{ playerFramesWonAgainstInPhase(playerOnPosition(3), playerOnPosition(1), 1) }}</span>
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(3),
+                            playerOnPosition(1),
+                            1
+                          )
+                        }}</span>
                       </td>
                       <td
                         class="text-center"
@@ -392,7 +439,13 @@
                           showAddFrame(playerOnPosition(3), playerOnPosition(2))
                         "
                       >
-                        <span class="title">{{ playerFramesWonAgainstInPhase(playerOnPosition(3), playerOnPosition(2), 1) }}</span>
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(3),
+                            playerOnPosition(2),
+                            1
+                          )
+                        }}</span>
                       </td>
                       <td class="text-center">
                         <v-btn
@@ -403,7 +456,9 @@
                         ></v-btn>
                       </td>
                       <td class="text-center total-score">
-                        <span class="title">{{ playerTotalFramesInPhase(playerOnPosition(3), 1) }}</span>
+                        <span class="title">{{
+                          playerTotalFramesInPhase(playerOnPosition(3), 1)
+                        }}</span>
                       </td>
                     </tr>
                   </tbody>
@@ -574,7 +629,10 @@
                     <div>{{ props.item.handicap }}</div>
                     <template v-slot:input>
                       <div class="mt-4 title">Bewerk handicap</div>
-                      <p>Pas deze handicap niet aan na het toernooi. Ga naar de competitie zelf.</p>
+                      <p>
+                        Pas deze handicap niet aan na het toernooi. Ga naar de
+                        competitie zelf.
+                      </p>
                       <v-text-field
                         v-model.number="props.item.handicap"
                         label="Bewerken"
@@ -611,44 +669,63 @@
                 :key="frame.id"
                 @click="showUpdateFrame(frame)"
               >
-                <v-container class="pt-0 pb-0" >
+                <v-container class="pt-0 pb-0">
                   <v-row class="pt-2">
                     <v-col cols="12" class="pa-0 font-weight-light text-center">
-                      <span v-if="frame.startDate">{{ frame.startDate | formatTime }}</span>
+                      <span v-if="frame.startDate">{{
+                        frame.startDate | formatTime
+                      }}</span>
                       <span v-if="frame.startDate && frame.endDate"> - </span>
-                      <span v-if="frame.endDate">{{ frame.endDate | formatTime }}</span>
+                      <span v-if="frame.endDate">{{
+                        frame.endDate | formatTime
+                      }}</span>
                     </v-col>
                   </v-row>
                   <v-row class="pb-2" style="border-bottom: 1px solid #eeeeee">
-                    <v-col cols="4" class="pa-0 text-right" 
-                          :class="{
-                            'font-weight-black':
-                              frame.players[0].score > frame.players[1].score
-                          }">
-                      {{ frame.players[0].firstName }} {{ frame.players[0].lastName }}
+                    <v-col
+                      cols="4"
+                      class="pa-0 text-right"
+                      :class="{
+                        'font-weight-black': frame.players[0].id === frame.winnerId
+                      }"
+                    >
+                      {{ frame.players[0].firstName }}
+                      {{ frame.players[0].lastName }}
                     </v-col>
                     <v-col cols="4" class="pa-0 text-center">
-                      <span style="white-space: pre">
-                        <span :class="{
-                            'font-weight-black':
-                              frame.players[0].score > frame.players[1].score
-                          }">{{ frame.players[0].score }}</span> - <span :class="{
-                            'font-weight-black':
-                              frame.players[1].score > frame.players[0].score
-                          }">{{ frame.players[1].score }}</span>
+                      <span>
+                        <span
+                          :class="{
+                            'font-weight-black': frame.players[0].id === frame.winnerId
+                          }"
+                          >{{ frame.players[0].score }}</span
+                        >
+                        -
+                        <span
+                          :class="{
+                            'font-weight-black': frame.players[1].id === frame.winnerId
+                          }"
+                          >{{ frame.players[1].score }}</span
+                        >
                       </span>
                     </v-col>
-                    <v-col cols="4" class="pa-0"
-                          :class="{
-                            'font-weight-black':
-                              frame.players[1].score > frame.players[0].score
-                          }">
-                      {{ frame.players[1].firstName }} {{ frame.players[1].lastName }}
+                    <v-col
+                      cols="4"
+                      class="pa-0"
+                      :class="{
+                        'font-weight-black': frame.players[1].id === frame.winnerId
+                      }"
+                    >
+                      {{ frame.players[1].firstName }}
+                      {{ frame.players[1].lastName }}
                     </v-col>
                   </v-row>
                 </v-container>
               </div>
-              <p class="ma-0 mt-2 text-center" v-if="tournament.frames.length === 0">
+              <p
+                class="ma-0 mt-2 text-center"
+                v-if="tournament.frames.length === 0"
+              >
                 Er zijn nog geen frames gespeeld.
               </p>
             </v-card-text>
@@ -664,8 +741,6 @@
 .tournament__display-name {
   margin-right: 20px;
 }
-
-
 </style>
 
 <script>
@@ -691,6 +766,7 @@ export default {
     addFrameTournamentPhase: 1,
     addFramePlayer1: null,
     addFramePlayer2: null,
+    addFrameWinnerId: null,
     showUpdateFrameDialog: false,
     frameToUpdate: null,
     breadcrumbs: []
@@ -1039,21 +1115,28 @@ export default {
         return;
       }
 
-      this.addFrameTournamentPhase = phase
+      this.addFrameTournamentPhase = phase;
 
       this.addFramePlayer1 = player1;
-      this.addFramePlayer1.score = 0;
+      // this.addFramePlayer1.score = 0;
+      this.addFramePlayer1.score = null;
 
       this.addFramePlayer2 = player2;
-      this.addFramePlayer2.score = 0;
+      // this.addFramePlayer2.score = 0;
+      this.addFramePlayer2.score = null;
+
+      // Default winner selection
+      //this.addFrameWinnerId = player1.id;
 
       this.showAddFrameDialog = true;
     },
     showAddFrameDialogReset() {
       this.addFrameTournamentPhase = 1;
+      this.addFrameFocus = false;
       this.showAddFrameDialog = false;
       this.addFramePlayer1 = null;
       this.addFramePlayer2 = null;
+      this.addFrameWinnerId = null;
     },
     addFrame() {
       if (!this.addFramePlayer1 || !this.addFramePlayer2) {
@@ -1061,19 +1144,26 @@ export default {
       }
 
       // Data validation
-      if (
-        this.addFramePlayer1.score < 0 ||
-        this.addFramePlayer2.score < 0 ||
-        this.addFramePlayer1.score === this.addFramePlayer2.score
-      ) {
-        return;
+      if (!this.addFrameWinnerId) {
+        // When there's is no winner ID we must check the score's to select a winner
+        if (
+          this.addFramePlayer1.score < 0 ||
+          this.addFramePlayer2.score < 0 ||
+          this.addFramePlayer1.score === this.addFramePlayer2.score
+        ) {
+          // When no winner could be determined, we don't add the frame yet
+          return;
+        }
       }
 
       const frame = {
         tournamentId: this.tournament.id,
         tournamentPhase: this.addFrameTournamentPhase,
         endDate: new Date().toISOString(),
-        winnerId: this.addFramePlayer2.score > this.addFramePlayer1.score ? this.addFramePlayer2.id : this.addFramePlayer1.id,
+        winnerId:
+          (this.addFrameWinnerId ? this.addFrameWinnerId : (this.addFramePlayer2.score > this.addFramePlayer1.score
+            ? this.addFramePlayer2.id
+            : this.addFramePlayer1.id)),
         framePlayer: [
           {
             position: 1,
@@ -1139,7 +1229,7 @@ export default {
 
       this.$apollo.mutate({
         mutation: gql`
-          mutation ($id: ID!) {
+          mutation($id: ID!) {
             removeFrame(id: $id)
           }
         `,
@@ -1147,7 +1237,9 @@ export default {
           id: frame.id
         },
         update: (store, { data: { removeFrame } }) => {
-          let frameIds = this.tournament.frames.map(f => { return f.id });
+          let frameIds = this.tournament.frames.map(f => {
+            return f.id;
+          });
           let frameIndex = frameIds.indexOf(removeFrame.id);
           if (frameIds !== -1) {
             this.tournament.frames.splice(frameIndex, 1);

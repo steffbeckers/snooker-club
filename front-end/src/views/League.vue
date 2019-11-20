@@ -444,7 +444,10 @@ export default {
             tournament: newTournament
           },
           update: (store, { data: { createTournament } }) => {
-            this.league.tournaments.unshift(createTournament);
+            this.$router.push({
+              name: "Tournament",
+              params: { id: createTournament.id }
+            });
           }
         })
         .finally(() => {
