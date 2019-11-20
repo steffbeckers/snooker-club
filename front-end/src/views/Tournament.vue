@@ -468,6 +468,207 @@
             </v-card-text>
           </v-card>
           <!-- 3 -->
+          <!-- 4 -->
+          <v-card v-if="tournament.players.length === 4" class="ma-2 mb-4">
+            <v-card-title>
+              Poule
+            </v-card-title>
+            <v-card-text>
+              <p class="ma-0">Telkens best of 3</p>
+              <div class="tournament tournament__bracket">
+                <v-container>
+                  <v-layout row>
+                    <v-flex xs5>
+                      <v-layout column>
+                        <v-flex>
+                          <v-autocomplete
+                            :items="tournament.players"
+                            placeholder="Selecteer speler"
+                            :filter="playerFilter"
+                            item-value="id"
+                            hide-selected
+                            hide-details
+                            required
+                            clearable
+                            return-object
+                            dense
+                            solo
+                            :value="playerOnPosition(1)"
+                            @change="upsertPlayerPositionTournament($event, 1)"
+                            @click:clear="deletePlayerPositionTournament(1)"
+                          >
+                            <template v-slot:selection="data">
+                              {{ data.item.firstName }} {{ data.item.lastName }}
+                            </template>
+                            <template v-slot:item="data">
+                              {{ data.item.firstName }} {{ data.item.lastName }}
+                            </template>
+                          </v-autocomplete>
+                        </v-flex>
+                        <v-flex class="mt-1 mb-1">
+                          <span class="mr-1">Frames</span>
+                          <v-btn icon>
+                            <v-icon>mdi-plus-circle</v-icon>
+                          </v-btn>
+                        </v-flex>
+                        <v-flex>
+                          <v-autocomplete
+                            :items="tournament.players"
+                            placeholder="Selecteer speler"
+                            :filter="playerFilter"
+                            item-value="id"
+                            hide-selected
+                            hide-details
+                            required
+                            clearable
+                            return-object
+                            dense
+                            solo
+                            :value="playerOnPosition(2)"
+                            @change="upsertPlayerPositionTournament($event, 2)"
+                            @click:clear="deletePlayerPositionTournament(2)"
+                          >
+                            <template v-slot:selection="data">
+                              {{ data.item.firstName }} {{ data.item.lastName }}
+                            </template>
+                            <template v-slot:item="data">
+                              {{ data.item.firstName }} {{ data.item.lastName }}
+                            </template>
+                          </v-autocomplete>
+                        </v-flex>
+                        <v-flex>&nbsp;</v-flex>
+                        <v-flex>&nbsp;</v-flex>
+                        <v-flex>
+                          <v-autocomplete
+                            :items="tournament.players"
+                            placeholder="Selecteer speler"
+                            :filter="playerFilter"
+                            item-value="id"
+                            hide-selected
+                            hide-details
+                            required
+                            clearable
+                            return-object
+                            dense
+                            solo
+                            :value="playerOnPosition(3)"
+                            @change="upsertPlayerPositionTournament($event, 3)"
+                            @click:clear="deletePlayerPositionTournament(3)"
+                          >
+                            <template v-slot:selection="data">
+                              {{ data.item.firstName }} {{ data.item.lastName }}
+                            </template>
+                            <template v-slot:item="data">
+                              {{ data.item.firstName }} {{ data.item.lastName }}
+                            </template>
+                          </v-autocomplete>
+                        </v-flex>
+                        <v-flex class="mt-1 mb-1">
+                          <span class="mr-1">Frames</span>
+                          <v-btn icon>
+                            <v-icon>mdi-plus-circle</v-icon>
+                          </v-btn>
+                        </v-flex>
+                        <v-flex>
+                          <v-autocomplete
+                            :items="tournament.players"
+                            placeholder="Selecteer speler"
+                            :filter="playerFilter"
+                            item-value="id"
+                            hide-selected
+                            hide-details
+                            required
+                            clearable
+                            return-object
+                            dense
+                            solo
+                            :value="playerOnPosition(4)"
+                            @change="upsertPlayerPositionTournament($event, 4)"
+                            @click:clear="deletePlayerPositionTournament(4)"
+                          >
+                            <template v-slot:selection="data">
+                              {{ data.item.firstName }} {{ data.item.lastName }}
+                            </template>
+                            <template v-slot:item="data">
+                              {{ data.item.firstName }} {{ data.item.lastName }}
+                            </template>
+                          </v-autocomplete>
+                        </v-flex>
+                      </v-layout>
+                    </v-flex>
+                    <v-flex xs1></v-flex>
+                    <v-flex xs5>
+                      <v-layout column>
+                        <v-flex>&nbsp;</v-flex>
+                        <v-flex>&nbsp;</v-flex>
+                        <v-flex>
+                          <v-autocomplete
+                            :items="tournament.players"
+                            placeholder="Selecteer speler"
+                            :filter="playerFilter"
+                            item-value="id"
+                            hide-selected
+                            hide-details
+                            required
+                            clearable
+                            return-object
+                            dense
+                            solo
+                            :value="playerOnPosition(5)"
+                            @change="upsertPlayerPositionTournament($event, 5)"
+                            @click:clear="deletePlayerPositionTournament(5)"
+                          >
+                            <template v-slot:selection="data">
+                              {{ data.item.firstName }} {{ data.item.lastName }}
+                            </template>
+                            <template v-slot:item="data">
+                              {{ data.item.firstName }} {{ data.item.lastName }}
+                            </template>
+                          </v-autocomplete>
+                        </v-flex>
+                        <v-flex>&nbsp;</v-flex>
+                        <v-flex>&nbsp;</v-flex>
+                        <v-flex>
+                          <span class="mr-1">Frames</span>
+                          <v-btn icon>
+                            <v-icon>mdi-plus-circle</v-icon>
+                          </v-btn>
+                        </v-flex>
+                        <v-flex>&nbsp;</v-flex>
+                        <v-flex>&nbsp;</v-flex>
+                        <v-flex>
+                          <v-autocomplete
+                            :items="tournament.players"
+                            placeholder="Selecteer speler"
+                            :filter="playerFilter"
+                            item-value="id"
+                            hide-selected
+                            hide-details
+                            required
+                            clearable
+                            return-object
+                            dense
+                            solo
+                            :value="playerOnPosition(6)"
+                            @change="upsertPlayerPositionTournament($event, 6)"
+                            @click:clear="deletePlayerPositionTournament(6)"
+                          >
+                            <template v-slot:selection="data">
+                              {{ data.item.firstName }} {{ data.item.lastName }}
+                            </template>
+                            <template v-slot:item="data">
+                              {{ data.item.firstName }} {{ data.item.lastName }}
+                            </template>
+                          </v-autocomplete>
+                        </v-flex>
+                      </v-layout>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+              </div>
+            </v-card-text>
+          </v-card>
+          <!-- 4 -->
           <!-- 5 -->
           <v-card v-if="tournament.players.length === 5" class="ma-2 mb-4">
             <v-card-title>
