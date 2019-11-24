@@ -99,9 +99,33 @@ namespace SC.API.BLL
             if (playerTournamentLink != null)
             {
                 await this.playerTournamentRepository.DeleteAsync(playerTournamentLink);
+
+                // Unlink all player positions from tournament as well
+                this.playerPositionTournamentRepository.DeleteByPlayerAndTournamentId(playerTournament.PlayerId, playerTournament.TournamentId);
+
+                // Remove player ID's on tournament
+                this.RemovePlayerOnTournament(playerTournament.PlayerId, playerTournament.TournamentId);
             }
 
             return this.tournamentRepository.GetWithPlayersById(playerTournament.TournamentId);
+        }
+
+        private void RemovePlayerOnTournament(Guid playerId, Guid tournamentId)
+        {
+            Tournament tournament = this.tournamentRepository.GetById(tournamentId);
+            if (tournament == null) { return; }
+
+            if (tournament.WinnerId == playerId)
+            {
+                tournament.WinnerId = null;
+            }
+
+            if (tournament.RunnerUpId == playerId)
+            {
+                tournament.RunnerUpId = null;
+            }
+
+            this.tournamentRepository.Update(tournament);
         }
 
         public async Task<Tournament> LinkPlayerPositionToTournamentAsync(PlayerPositionTournament playerPositionTournament)

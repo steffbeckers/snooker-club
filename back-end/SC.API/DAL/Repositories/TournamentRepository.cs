@@ -4,6 +4,7 @@ using SC.API.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SC.API.DAL.Repositories
 {
@@ -53,47 +54,37 @@ namespace SC.API.DAL.Repositories
                 .Where(pt => pt.TournamentId == id)
                 .ToList();
 
-            List<Player> players = playerTournaments.Select(pt => {
-                return new Player()
-                {
-                    Id = pt.Player.Id,
-                    FirstName = pt.Player.FirstName,
-                    LastName = pt.Player.LastName,
-                    Handicap = pt.Handicap
-                };
-            }).ToList();
+            return playerTournaments.Select(pt =>
+            {
+                Player player = pt.Player;
+                player.Handicap = pt.Handicap;
 
-            return players;
+                return player;
+            });
         }
 
         public IEnumerable<PlayerPositionTournament> GetPlayerPositionsOfTournamentById(Guid id)
         {
-            List<PlayerPositionTournament> playerPositions = this.context.PlayerPositionTournament
+            return this.context.PlayerPositionTournament
                 .Include(ppt => ppt.Player)
                 .Where(ppt => ppt.TournamentId == id)
                 .OrderBy(ppt => ppt.Position)
                 .ToList();
-
-            return playerPositions;
         }
 
         public IEnumerable<Group> GetGroupsOfTournamentById(Guid id)
         {
-            List<Group> groups = this.context.Groups
+            return this.context.Groups
                 .Where(g => g.TournamentId == id)
                 .ToList();
-
-            return groups;
         }
 
         public IEnumerable<Frame> GetFramesOfTournamentById(Guid id)
         {
-            List<Frame> frames = this.context.Frames
+            return this.context.Frames
                 .Where(f => f.TournamentId == id)
                 .OrderByDescending(f => f.EndDate)
                 .ToList();
-
-            return frames;
         }
     }
 }

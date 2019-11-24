@@ -25,5 +25,15 @@ namespace SC.API.DAL.Repositories
                 .Where(ppt => ppt.Position == position && ppt.TournamentId == tournamentId)
                 .SingleOrDefault();
         }
+
+        public void DeleteByPlayerAndTournamentId(Guid playerId, Guid tournamentId)
+        {
+            List<PlayerPositionTournament> playerPositionTournaments = this.context.PlayerPositionTournament
+                .Where(ppt => ppt.PlayerId == playerId && ppt.TournamentId == tournamentId)
+                .ToList();
+
+            this.context.RemoveRange(playerPositionTournaments);
+            this.context.SaveChanges();
+        }
     }
 }

@@ -263,7 +263,7 @@
                 dense
                 sortBy="firstName"
                 hide-default-footer
-                :items-per-page="100"
+                :items-per-page="1000"
               >
                 <template v-slot:item.firstName="props">
                   {{ props.item.firstName }} {{ props.item.lastName }}
@@ -403,8 +403,8 @@ export default {
           text: response.data.league.displayName,
           disabled: true
         };
-      }
-      //pollInterval: 1000
+      },
+      pollInterval: 1000
     },
     players: {
       query: gql`
