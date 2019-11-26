@@ -34,7 +34,7 @@ spec:
             - containerPort: 80
               name: http
           volumeMounts:
-            - mountPath: /etc/localtime:/etc/localtime:ro
+            - mountPath: /etc/localtime
               name: localtime
           # readinessProbe:
           #   httpGet:
@@ -43,6 +43,10 @@ spec:
           #     initialDelaySeconds: 5
           #     periodSeconds: 5
           #     successThreshold: 1
+      volumes:
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
 ---
 apiVersion: v1
 kind: Service
