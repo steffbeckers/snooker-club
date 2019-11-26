@@ -36,13 +36,13 @@ spec:
           volumeMounts:
             - mountPath: /etc/localtime:/etc/localtime:ro
               name: localtime
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 80
-              initialDelaySeconds: 5
-              periodSeconds: 5
-              successThreshold: 1
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: 80
+          #     initialDelaySeconds: 5
+          #     periodSeconds: 5
+          #     successThreshold: 1
 ---
 apiVersion: v1
 kind: Service
