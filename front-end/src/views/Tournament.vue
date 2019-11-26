@@ -46,6 +46,146 @@
           <v-card-text>
             <v-container>
               <v-row>
+                <v-col cols="3">
+                  <v-dialog
+                    ref="showAddFrameDialogStartDatePickerRef"
+                    v-model="showAddFrameDialogStartDatePicker"
+                    :return-value.sync="addFrameStartDate"
+                    persistent
+                    width="290px"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-text-field
+                        v-model="addFrameStartDate"
+                        label="Startdatum"
+                        prepend-icon="event"
+                        readonly
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      v-model="addFrameStartDate"
+                      first-day-of-week="1"
+                      locale="nl"
+                      scrollable
+                    >
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        text
+                        @click="
+                          showAddFrameDialogStartDatePicker = false
+                        "
+                        >Sluiten</v-btn
+                      >
+                      <v-btn
+                        text
+                        color="primary"
+                        @click="$refs.showAddFrameDialogStartDatePickerRef.save(addFrameStartDate)"
+                        >OK</v-btn
+                      >
+                    </v-date-picker>
+                  </v-dialog>
+                </v-col>
+                <v-col cols="3">
+                  <v-dialog
+                    ref="showAddFrameDialogStartTimePickerRef"
+                    v-model="showAddFrameDialogStartTimePicker"
+                    :return-value.sync="addFrameStartTime"
+                    persistent
+                    width="290px"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-text-field
+                        v-model="addFrameStartTime"
+                        label="Starttijd"
+                        prepend-icon="access_time"
+                        readonly
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-time-picker
+                      v-if="showAddFrameDialogStartTimePicker"
+                      v-model="addFrameStartTime"
+                      full-width
+                      :format="timePickerFormat"
+                    >
+                      <v-spacer></v-spacer>
+                      <v-btn text @click="showAddFrameDialogStartTimePicker = false">Sluiten</v-btn>
+                      <v-btn text color="primary" @click="$refs.showAddFrameDialogStartTimePickerRef.save(addFrameStartTime)">OK</v-btn>
+                    </v-time-picker>
+                  </v-dialog>
+                </v-col>
+                <v-col cols="3">
+                  <v-dialog
+                    ref="showAddFrameDialogEndDatePickerRef"
+                    v-model="showAddFrameDialogEndDatePicker"
+                    :return-value.sync="addFrameEndDate"
+                    persistent
+                    width="290px"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-text-field
+                        v-model="addFrameEndDate"
+                        label="Einddatum"
+                        prepend-icon="event"
+                        readonly
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      v-model="addFrameEndDate"
+                      first-day-of-week="1"
+                      locale="nl"
+                      scrollable
+                    >
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        text
+                        @click="
+                          showAddFrameDialogEndDatePicker = false
+                        "
+                        >Sluiten</v-btn
+                      >
+                      <v-btn
+                        text
+                        color="primary"
+                        @click="$refs.showAddFrameDialogEndDatePickerRef.save(addFrameEndDate)"
+                        >OK</v-btn
+                      >
+                    </v-date-picker>
+                  </v-dialog>
+                </v-col>
+                <v-col cols="3">
+                  <v-dialog
+                    ref="showAddFrameDialogEndTimePickerRef"
+                    v-model="showAddFrameDialogEndTimePicker"
+                    :return-value.sync="addFrameEndTime"
+                    persistent
+                    width="290px"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-text-field
+                        v-model="addFrameEndTime"
+                        label="Eindtijd"
+                        prepend-icon="access_time"
+                        readonly
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-time-picker
+                      v-if="showAddFrameDialogEndTimePicker"
+                      v-model="addFrameEndTime"
+                      full-width
+                      :format="timePickerFormat"
+                    >
+                      <v-spacer></v-spacer>
+                      <v-btn text @click="showAddFrameDialogEndTimePicker = false">Sluiten</v-btn>
+                      <v-btn text color="primary" @click="$refs.showAddFrameDialogEndTimePickerRef.save(addFrameEndTime)">OK</v-btn>
+                    </v-time-picker>
+                  </v-dialog>
+                </v-col>
+              </v-row>
+              <v-row>
                 <v-col cols="4" class="text-right">
                   Speler 1
                 </v-col>
@@ -277,7 +417,8 @@
                       <td class="text-center">
                         <v-btn
                           elevation="0"
-                          style="height: 80%;"
+                          style="min-width: 35px; height: 35px;"
+                          class="pa-0"
                           small
                           disabled
                         ></v-btn>
@@ -364,7 +505,8 @@
                       <td class="text-center">
                         <v-btn
                           elevation="0"
-                          style="height: 80%;"
+                          style="min-width: 35px; height: 35px;"
+                          class="pa-0"
                           small
                           disabled
                         ></v-btn>
@@ -451,7 +593,8 @@
                       <td class="text-center">
                         <v-btn
                           elevation="0"
-                          style="height: 80%;"
+                          style="min-width: 35px; height: 35px;"
+                          class="pa-0"
                           small
                           disabled
                         ></v-btn>
@@ -519,7 +662,8 @@
                       <td class="text-center">
                         <v-btn
                           elevation="0"
-                          style="height: 80%;"
+                          style="min-width: 35px; height: 35px;"
+                          class="pa-0"
                           small
                           disabled
                         ></v-btn>
@@ -606,7 +750,8 @@
                       <td class="text-center">
                         <v-btn
                           elevation="0"
-                          style="height: 80%;"
+                          style="min-width: 35px; height: 35px;"
+                          class="pa-0"
                           small
                           disabled
                         ></v-btn>
@@ -693,7 +838,8 @@
                       <td class="text-center">
                         <v-btn
                           elevation="0"
-                          style="height: 80%;"
+                          style="min-width: 35px; height: 35px;"
+                          class="pa-0"
                           small
                           disabled
                         ></v-btn>
@@ -975,7 +1121,8 @@
                       <td class="text-center">
                         <v-btn
                           elevation="0"
-                          style="height: 80%;"
+                          style="min-width: 35px; height: 35px;"
+                          class="pa-0"
                           small
                           disabled
                         ></v-btn>
@@ -1092,7 +1239,8 @@
                       <td class="text-center">
                         <v-btn
                           elevation="0"
-                          style="height: 80%;"
+                          style="min-width: 35px; height: 35px;"
+                          class="pa-0"
                           small
                           disabled
                         ></v-btn>
@@ -1209,7 +1357,8 @@
                       <td class="text-center">
                         <v-btn
                           elevation="0"
-                          style="height: 80%;"
+                          style="min-width: 35px; height: 35px;"
+                          class="pa-0"
                           small
                           disabled
                         ></v-btn>
@@ -1326,7 +1475,8 @@
                       <td class="text-center">
                         <v-btn
                           elevation="0"
-                          style="height: 80%;"
+                          style="min-width: 35px; height: 35px;"
+                          class="pa-0"
                           small
                           disabled
                         ></v-btn>
@@ -1443,7 +1593,8 @@
                       <td class="text-center">
                         <v-btn
                           elevation="0"
-                          style="height: 80%;"
+                          style="min-width: 35px; height: 35px;"
+                          class="pa-0"
                           small
                           disabled
                         ></v-btn>
@@ -1460,8 +1611,775 @@
             </v-card-text>
           </v-card>
           <!-- 5 -->
+          <!-- 7, 8 -->
+          <v-card v-if="tournament.players.length === 7 || tournament.players.length === 8" class="ma-2 mb-4">
+            <v-card-title>
+              <span>Poule 1</span>
+              <span class="ml-4 grey-text body-1 font-weight-light">1 frame</span>
+            </v-card-title>
+            <v-card-text>
+              <v-simple-table class="tournament">
+                <template v-slot:default>
+                  <thead>
+                    <tr>
+                      <th class="text-left">Spelers</th>
+                      <th></th>
+                      <th class="text-center pl-0 pr-0">1</th>
+                      <th class="text-center pl-0 pr-0">2</th>
+                      <th class="text-center pl-0 pr-0">3</th>
+                      <th class="text-center pl-0 pr-0">4</th>
+                      <th class="text-center">Totaal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <v-autocomplete
+                          :items="tournament.players"
+                          placeholder="Selecteer speler"
+                          :filter="playerFilter"
+                          item-value="id"
+                          hide-selected
+                          hide-details
+                          required
+                          clearable
+                          return-object
+                          dense
+                          solo
+                          flat
+                          :value="playerOnPosition(1)"
+                          @change="upsertPlayerPositionTournament($event, 1)"
+                          @click:clear="deletePlayerPositionTournament(1)"
+                        >
+                          <template v-slot:selection="data">
+                            {{ data.item.firstName }} {{ data.item.lastName }}
+                          </template>
+                          <template v-slot:item="data">
+                            {{ data.item.firstName }} {{ data.item.lastName }}
+                          </template>
+                        </v-autocomplete>
+                      </td>
+                      <td class="pl-0 pr-0">1</td>
+                      <td class="text-center">
+                        <v-btn
+                          elevation="0"
+                          style="min-width: 35px; height: 35px;"
+                          class="pa-0"
+                          small
+                          disabled
+                        ></v-btn>
+                      </td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(1), playerOnPosition(2))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(1),
+                            playerOnPosition(2),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(1), playerOnPosition(3))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(1),
+                            playerOnPosition(3),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(1), playerOnPosition(4))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(1),
+                            playerOnPosition(4),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td class="text-center total-score">
+                        <span class="title">{{
+                          playerTotalFramesInPhase(playerOnPosition(1), 1)
+                        }}</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <v-autocomplete
+                          :items="tournament.players"
+                          placeholder="Selecteer speler"
+                          :filter="playerFilter"
+                          item-value="id"
+                          hide-selected
+                          hide-details
+                          required
+                          clearable
+                          return-object
+                          dense
+                          solo
+                          flat
+                          :value="playerOnPosition(2)"
+                          @change="upsertPlayerPositionTournament($event, 2)"
+                          @click:clear="deletePlayerPositionTournament(2)"
+                        >
+                          <template v-slot:selection="data">
+                            {{ data.item.firstName }} {{ data.item.lastName }}
+                          </template>
+                          <template v-slot:item="data">
+                            {{ data.item.firstName }} {{ data.item.lastName }}
+                          </template>
+                        </v-autocomplete>
+                      </td>
+                      <td class="pl-0 pr-0">2</td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(2), playerOnPosition(1))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(2),
+                            playerOnPosition(1),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td class="text-center">
+                        <v-btn
+                          elevation="0"
+                          style="min-width: 35px; height: 35px;"
+                          class="pa-0"
+                          small
+                          disabled
+                        ></v-btn>
+                      </td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(2), playerOnPosition(3))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(2),
+                            playerOnPosition(3),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(2), playerOnPosition(4))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(2),
+                            playerOnPosition(4),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td class="text-center total-score">
+                        <span class="title">{{
+                          playerTotalFramesInPhase(playerOnPosition(2), 1)
+                        }}</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <v-autocomplete
+                          :items="tournament.players"
+                          placeholder="Selecteer speler"
+                          :filter="playerFilter"
+                          item-value="id"
+                          hide-selected
+                          hide-details
+                          required
+                          clearable
+                          return-object
+                          dense
+                          solo
+                          flat
+                          :value="playerOnPosition(3)"
+                          @change="upsertPlayerPositionTournament($event, 3)"
+                          @click:clear="deletePlayerPositionTournament(3)"
+                        >
+                          <template v-slot:selection="data">
+                            {{ data.item.firstName }} {{ data.item.lastName }}
+                          </template>
+                          <template v-slot:item="data">
+                            {{ data.item.firstName }} {{ data.item.lastName }}
+                          </template>
+                        </v-autocomplete>
+                      </td>
+                      <td class="pl-0 pr-0">3</td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(3), playerOnPosition(1))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(3),
+                            playerOnPosition(1),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(3), playerOnPosition(2))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(3),
+                            playerOnPosition(2),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td class="text-center">
+                        <v-btn
+                          elevation="0"
+                          style="min-width: 35px; height: 35px;"
+                          class="pa-0"
+                          small
+                          disabled
+                        ></v-btn>
+                      </td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(3), playerOnPosition(4))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(3),
+                            playerOnPosition(4),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td class="text-center total-score">
+                        <span class="title">{{
+                          playerTotalFramesInPhase(playerOnPosition(3), 1)
+                        }}</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <v-autocomplete
+                          :items="tournament.players"
+                          placeholder="Selecteer speler"
+                          :filter="playerFilter"
+                          item-value="id"
+                          hide-selected
+                          hide-details
+                          required
+                          clearable
+                          return-object
+                          dense
+                          solo
+                          flat
+                          :value="playerOnPosition(4)"
+                          @change="upsertPlayerPositionTournament($event, 4)"
+                          @click:clear="deletePlayerPositionTournament(4)"
+                        >
+                          <template v-slot:selection="data">
+                            {{ data.item.firstName }} {{ data.item.lastName }}
+                          </template>
+                          <template v-slot:item="data">
+                            {{ data.item.firstName }} {{ data.item.lastName }}
+                          </template>
+                        </v-autocomplete>
+                      </td>
+                      <td class="pl-0 pr-0">4</td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(4), playerOnPosition(1))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(4),
+                            playerOnPosition(1),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(4), playerOnPosition(2))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(4),
+                            playerOnPosition(2),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(4), playerOnPosition(3))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(4),
+                            playerOnPosition(3),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td class="text-center">
+                        <v-btn
+                          elevation="0"
+                          style="min-width: 35px; height: 35px;"
+                          class="pa-0"
+                          small
+                          disabled
+                        ></v-btn>
+                      </td>
+                      <td class="text-center total-score">
+                        <span class="title">{{
+                          playerTotalFramesInPhase(playerOnPosition(4), 1)
+                        }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-card-text>
+          </v-card>
+          <v-card v-if="tournament.players.length === 7 || tournament.players.length === 8" class="ma-2 mb-4">
+            <v-card-title>
+              <span>Poule 2</span>
+              <span class="ml-4 grey-text body-1 font-weight-light">
+                <span v-if="tournament.players.length === 7">2 frames</span>
+                <span v-if="tournament.players.length === 8">1 frame</span>
+              </span>
+            </v-card-title>
+            <v-card-text>
+              <v-simple-table class="tournament">
+                <template v-slot:default>
+                  <thead>
+                    <tr>
+                      <th class="text-left">Spelers</th>
+                      <th></th>
+                      <th class="text-center pl-0 pr-0">1</th>
+                      <th class="text-center pl-0 pr-0">2</th>
+                      <th class="text-center pl-0 pr-0">3</th>
+                      <th v-if="tournament.players.length === 8" class="text-center pl-0 pr-0">4</th>
+                      <th class="text-center">Totaal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <v-autocomplete
+                          :items="tournament.players"
+                          placeholder="Selecteer speler"
+                          :filter="playerFilter"
+                          item-value="id"
+                          hide-selected
+                          hide-details
+                          required
+                          clearable
+                          return-object
+                          dense
+                          solo
+                          flat
+                          :value="playerOnPosition(5)"
+                          @change="upsertPlayerPositionTournament($event, 5)"
+                          @click:clear="deletePlayerPositionTournament(5)"
+                        >
+                          <template v-slot:selection="data">
+                            {{ data.item.firstName }} {{ data.item.lastName }}
+                          </template>
+                          <template v-slot:item="data">
+                            {{ data.item.firstName }} {{ data.item.lastName }}
+                          </template>
+                        </v-autocomplete>
+                      </td>
+                      <td class="pl-0 pr-0">1</td>
+                      <td class="text-center">
+                        <v-btn
+                          elevation="0"
+                          style="min-width: 35px; height: 35px;"
+                          class="pa-0"
+                          small
+                          disabled
+                        ></v-btn>
+                      </td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(5), playerOnPosition(6))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(5),
+                            playerOnPosition(6),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(5), playerOnPosition(7))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(5),
+                            playerOnPosition(7),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td
+                        v-if="tournament.players.length === 8"
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(5), playerOnPosition(8))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(5),
+                            playerOnPosition(8),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td class="text-center total-score">
+                        <span class="title">{{
+                          playerTotalFramesInPhase(playerOnPosition(5), 1)
+                        }}</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <v-autocomplete
+                          :items="tournament.players"
+                          placeholder="Selecteer speler"
+                          :filter="playerFilter"
+                          item-value="id"
+                          hide-selected
+                          hide-details
+                          required
+                          clearable
+                          return-object
+                          dense
+                          solo
+                          flat
+                          :value="playerOnPosition(6)"
+                          @change="upsertPlayerPositionTournament($event, 6)"
+                          @click:clear="deletePlayerPositionTournament(6)"
+                        >
+                          <template v-slot:selection="data">
+                            {{ data.item.firstName }} {{ data.item.lastName }}
+                          </template>
+                          <template v-slot:item="data">
+                            {{ data.item.firstName }} {{ data.item.lastName }}
+                          </template>
+                        </v-autocomplete>
+                      </td>
+                      <td class="pl-0 pr-0">2</td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(6), playerOnPosition(5))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(6),
+                            playerOnPosition(5),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td class="text-center">
+                        <v-btn
+                          elevation="0"
+                          style="min-width: 35px; height: 35px;"
+                          class="pa-0"
+                          small
+                          disabled
+                        ></v-btn>
+                      </td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(6), playerOnPosition(7))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(6),
+                            playerOnPosition(7),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td
+                        v-if="tournament.players.length === 8"
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(6), playerOnPosition(8))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(6),
+                            playerOnPosition(8),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td class="text-center total-score">
+                        <span class="title">{{
+                          playerTotalFramesInPhase(playerOnPosition(6), 1)
+                        }}</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <v-autocomplete
+                          :items="tournament.players"
+                          placeholder="Selecteer speler"
+                          :filter="playerFilter"
+                          item-value="id"
+                          hide-selected
+                          hide-details
+                          required
+                          clearable
+                          return-object
+                          dense
+                          solo
+                          flat
+                          :value="playerOnPosition(7)"
+                          @change="upsertPlayerPositionTournament($event, 7)"
+                          @click:clear="deletePlayerPositionTournament(7)"
+                        >
+                          <template v-slot:selection="data">
+                            {{ data.item.firstName }} {{ data.item.lastName }}
+                          </template>
+                          <template v-slot:item="data">
+                            {{ data.item.firstName }} {{ data.item.lastName }}
+                          </template>
+                        </v-autocomplete>
+                      </td>
+                      <td class="pl-0 pr-0">3</td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(7), playerOnPosition(5))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(7),
+                            playerOnPosition(5),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(7), playerOnPosition(6))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(7),
+                            playerOnPosition(6),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td class="text-center">
+                        <v-btn
+                          elevation="0"
+                          style="min-width: 35px; height: 35px;"
+                          class="pa-0"
+                          small
+                          disabled
+                        ></v-btn>
+                      </td>
+                      <td
+                        v-if="tournament.players.length === 8"
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(7), playerOnPosition(8))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(7),
+                            playerOnPosition(8),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td class="text-center total-score">
+                        <span class="title">{{
+                          playerTotalFramesInPhase(playerOnPosition(7), 1)
+                        }}</span>
+                      </td>
+                    </tr>
+                    <tr v-if="tournament.players.length === 8">
+                      <td>
+                        <v-autocomplete
+                          :items="tournament.players"
+                          placeholder="Selecteer speler"
+                          :filter="playerFilter"
+                          item-value="id"
+                          hide-selected
+                          hide-details
+                          required
+                          clearable
+                          return-object
+                          dense
+                          solo
+                          flat
+                          :value="playerOnPosition(8)"
+                          @change="upsertPlayerPositionTournament($event, 8)"
+                          @click:clear="deletePlayerPositionTournament(8)"
+                        >
+                          <template v-slot:selection="data">
+                            {{ data.item.firstName }} {{ data.item.lastName }}
+                          </template>
+                          <template v-slot:item="data">
+                            {{ data.item.firstName }} {{ data.item.lastName }}
+                          </template>
+                        </v-autocomplete>
+                      </td>
+                      <td class="pl-0 pr-0">4</td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(8), playerOnPosition(5))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(8),
+                            playerOnPosition(5),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(8), playerOnPosition(6))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(8),
+                            playerOnPosition(6),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td
+                        class="text-center"
+                        style="cursor: pointer"
+                        @click="
+                          showAddFrame(playerOnPosition(8), playerOnPosition(7))
+                        "
+                      >
+                        <span class="title">{{
+                          playerFramesWonAgainstInPhase(
+                            playerOnPosition(8),
+                            playerOnPosition(7),
+                            1
+                          )
+                        }}</span>
+                      </td>
+                      <td class="text-center">
+                        <v-btn
+                          elevation="0"
+                          style="min-width: 35px; height: 35px;"
+                          class="pa-0"
+                          small
+                          disabled
+                        ></v-btn>
+                      </td>
+                      <td class="text-center total-score">
+                        <span class="title">{{
+                          playerTotalFramesInPhase(playerOnPosition(8), 1)
+                        }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-card-text>
+          </v-card>
+          <!-- 7, 8 -->
           <!-- Semi final -->
-          <v-card v-if="tournament.players.length === 6" class="ma-2 mb-4">
+          <v-card
+            v-if="tournament.players.length === 6 ||
+                  tournament.players.length === 7 ||
+                  tournament.players.length === 8"
+            class="ma-2 mb-4"
+          >
             <v-card-title>
               <span>Halve finale</span>
               <span class="ml-4 grey-text body-1 font-weight-light">1 frame</span>
@@ -2067,6 +2985,7 @@
 
 <script>
 import gql from "graphql-tag";
+import moment from "moment";
 
 export default {
   name: "Tournament",
@@ -2086,12 +3005,21 @@ export default {
     ],
     showAddFrameDialog: false,
     addFrameTournamentPhase: 1,
+    showAddFrameDialogStartDatePicker: false,
+    addFrameStartDate: moment().subtract(20, "minutes").format("YYYY-MM-DD"),
+    showAddFrameDialogStartTimePicker: false,
+    addFrameStartTime: moment().subtract(20, "minutes").format("HH:mm"),
+    showAddFrameDialogEndDatePicker: false,
+    addFrameEndDate: moment().format("YYYY-MM-DD"),
+    showAddFrameDialogEndTimePicker: false,
+    addFrameEndTime: moment().format("HH:mm"),
     addFramePlayer1: null,
     addFramePlayer2: null,
     addFrameWinnerId: null,
     showUpdateFrameDialog: false,
     frameToUpdate: null,
-    breadcrumbs: []
+    breadcrumbs: [],
+    timePickerFormat: '24h'
   }),
   apollo: {
     tournament: {
@@ -2204,7 +3132,7 @@ export default {
           });
         }
       },
-      pollInterval: 1000
+      //pollInterval: 1000
     }
   },
   computed: {
@@ -2441,11 +3369,26 @@ export default {
       });
     },
     showAddFrame(player1, player2, phase = 1) {
+      // Validation
       if (!player1 || !player2) {
+        return;
+      }
+      if (player1.id === player2.id) {
         return;
       }
 
       this.addFrameTournamentPhase = phase;
+
+      // When opening the dialog => reset dates
+      // TODO: Instead of moment() => use date of tournament?
+      this.showAddFrameDialogStartDatePicker = false;
+      this.addFrameStartDate = moment().subtract(20, "minutes").format("YYYY-MM-DD");
+      this.showAddFrameDialogStartTimePicker = false;
+      this.addFrameStartTime = moment().subtract(20, "minutes").format("HH:mm");
+      this.showAddFrameDialogEndDatePicker = false;
+      this.addFrameEndDate = moment().format("YYYY-MM-DD");
+      this.showAddFrameDialogEndTimePicker = false;
+      this.addFrameEndTime = moment().format("HH:mm");
 
       this.addFramePlayer1 = player1;
       // this.addFramePlayer1.score = 0;
@@ -2462,7 +3405,6 @@ export default {
     },
     showAddFrameDialogReset() {
       this.addFrameTournamentPhase = 1;
-      this.addFrameFocus = false;
       this.showAddFrameDialog = false;
       this.addFramePlayer1 = null;
       this.addFramePlayer2 = null;
@@ -2489,7 +3431,8 @@ export default {
       const frame = {
         tournamentId: this.tournament.id,
         tournamentPhase: this.addFrameTournamentPhase,
-        endDate: new Date().toISOString(),
+        startDate: this.addFrameStartDate && this.addFrameStartTime ? this.addFrameStartDate + "T" + this.addFrameStartTime + ":00" : moment().subtract(20, "minutes").toISOString(),
+        endDate: this.addFrameEndDate && this.addFrameEndTime ? this.addFrameEndDate + "T" + this.addFrameEndTime + ":00" : moment().toISOString(),
         winnerId:
           (this.addFrameWinnerId ? this.addFrameWinnerId : (this.addFramePlayer2.score > this.addFramePlayer1.score
             ? this.addFramePlayer2.id

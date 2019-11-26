@@ -62,7 +62,7 @@
                       <v-row>
                         <v-col cols="12">
                           <v-dialog
-                            ref="dialog"
+                            ref="showAddTournamentDialogDatePickerRef"
                             v-model="showAddTournamentDialogDatePicker"
                             :return-value.sync="newTournament.date"
                             persistent
@@ -95,7 +95,7 @@
                               <v-btn
                                 text
                                 color="primary"
-                                @click="$refs.dialog.save(newTournament.date)"
+                                @click="$refs.showAddTournamentDialogDatePickerRef.save(newTournament.date)"
                                 >OK</v-btn
                               >
                             </v-date-picker>
@@ -404,7 +404,7 @@ export default {
           disabled: true
         };
       },
-      pollInterval: 1000
+      //pollInterval: 1000
     },
     players: {
       query: gql`

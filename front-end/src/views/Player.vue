@@ -68,8 +68,8 @@ export default {
             response.data.player.lastName,
           disabled: true
         };
-      },
-      pollInterval: 1000
+      }
+      //pollInterval: 1000
     },
     players: {
       query: gql`
