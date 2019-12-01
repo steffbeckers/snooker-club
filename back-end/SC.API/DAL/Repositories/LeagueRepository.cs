@@ -36,11 +36,14 @@ namespace SC.API.DAL.Repositories
 
             return leaguePlayers.Select(lp =>
             {
-                Player player = lp.Player;
+                Player player = new Player();
+                player.Id = lp.Player.Id;
+                player.FirstName = lp.Player.FirstName;
+                player.LastName = lp.Player.LastName;
                 player.Handicap = lp.Handicap;
 
                 return player;
-            });
+            }).ToList();
         }
     }
 }

@@ -43,12 +43,6 @@ namespace SC.API.DAL.Repositories
 
         public IEnumerable<Player> GetPlayersOfTournamentById(Guid id)
         {
-            Tournament tournament = this.context.Tournaments.Find(id);
-            if (tournament == null)
-            {
-                return null;
-            }
-
             List<PlayerTournament> playerTournaments = this.context.PlayerTournament
                 .Include(pt => pt.Player)
                 .Where(pt => pt.TournamentId == id)
@@ -56,11 +50,14 @@ namespace SC.API.DAL.Repositories
 
             return playerTournaments.Select(pt =>
             {
-                Player player = pt.Player;
+                Player player = new Player();
+                player.Id = pt.Player.Id;
+                player.FirstName = pt.Player.FirstName;
+                player.LastName = pt.Player.LastName;
                 player.Handicap = pt.Handicap;
 
                 return player;
-            });
+            }).ToList();
         }
 
         public IEnumerable<PlayerPositionTournament> GetPlayerPositionsOfTournamentById(Guid id)
